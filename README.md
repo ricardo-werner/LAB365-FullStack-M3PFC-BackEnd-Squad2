@@ -112,7 +112,7 @@ No desenvolvimento desta aplicação, colocamos em prática:
 
 Clone o projeto para a sua máquina
 ```bash
-git@github.com:ricardo-werner/LAB365-FullStack-M03-ProjFinal-Marketplace.git
+git@github.com:FullStack-Itaguacu/M3P-BackEnd-Squad2.git
 ```
 Obs: necessário configurar SSH [(veja como clicando aqui)](https://www.youtube.com/watch?v=n-H1eFSsugo)
 
