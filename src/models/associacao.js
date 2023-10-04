@@ -4,9 +4,10 @@ const { UsuariosEnderecos } = require('./usuariosEnderecos');
 
 Usuarios.belongsToMany(Enderecos, {
   through: UsuariosEnderecos,
-  foreignKey: 'usuarioId',
+  foreignKey: 'usuarioId', 
 });
+
 Enderecos.belongsToMany(Usuarios, {
   through: UsuariosEnderecos,
-  foreignKey: 'enderecoId',
+  foreignKey: 'enderecoId', 
 });

@@ -1,7 +1,6 @@
 const { STRING, ENUM, DATE, INTEGER } = require('sequelize');
 const { connection } = require('../database/connection');
 const { Enderecos } = require('./enderecos');
-const { UsuariosEnderecos } = require('./usuariosEnderecos');
 
 const Usuarios = connection.define(
   'usuarios',

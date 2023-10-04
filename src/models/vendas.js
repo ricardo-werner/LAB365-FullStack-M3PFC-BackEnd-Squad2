@@ -51,11 +51,11 @@ const Vendas = connection.define(
   { underscored: true, paranoid: true }
 );
 
-Vendas.belongsTo(Usuarios, { foreignKey: 'comprador_id' });
-Vendas.belongsTo(Usuarios, { foreignKey: 'vendedor_id' });
-Vendas.belongsTo(Produtos, { foreignKey: 'produto_id' });
+Vendas.belongsTo(Usuarios, { foreignKey: 'compradorId' });
+Vendas.belongsTo(Usuarios, { foreignKey: 'vendedorId' });
+Vendas.belongsTo(Produtos, { foreignKey: 'produtoId' });
 Vendas.belongsTo(Enderecos, {
-  foreignKey: 'usuarios_enderecos_id',
+  foreignKey: 'usuariosEnderecosId',
 });
 
 module.exports = {
