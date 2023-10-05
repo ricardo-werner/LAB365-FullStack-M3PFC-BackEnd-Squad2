@@ -20,7 +20,7 @@ class Server {
     async database() {
         try {
             await connection.authenticate();//Autenticação com o banco de dados
-            console.log('Conexão bem sucessida!');
+            console.log('Conexão bem sucedida!');
         } catch (error) {
             console.log('Erro ao conectar com o banco de dados: ', error);
             throw error;
