@@ -1,6 +1,9 @@
 const { Usuarios, Enderecos } = require("../models");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 class UsuarioController {
-  async adicionarUsuario(req, res) {
+  // Método para adicionar um usuário ADMIN
+  async adicionarUsuarioAdmin(req, res) {
     try {
       const {
         enderecoId,
@@ -44,14 +47,15 @@ class UsuarioController {
       }
       // Verifica se os campos obrigatórios estão ausentes ou vazios
       if (
+        //campos de endereço obrigatórios
         !enderecoId ||
         !cep ||
         !logradouro ||
         !numero ||
         !bairro ||
         !cidade ||
-        !estado || //campos de endereço obrigatórios
-        !nomeCompleto ||
+        !estado ||
+        !nomeCompleto || //campos de usuario obrigatórios
         !cpf ||
         !dataNascimento ||
         !telefone ||
@@ -59,20 +63,19 @@ class UsuarioController {
         !senha ||
         !tipoUsuario
       ) {
-        //campos de usuario obrigatórios
         return res.status(422).json({
           error: "Todos os campos obrigatórios devem ser preenchidos.",
         });
       }
 
       // Verifica se o email já está cadastrado
-      const emailExiste = await Usuario.findOne({ where: { email: email } });
+      const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
         return res.status(409).json({ error: "Email já cadastrado." });
       }
 
       // Verifica se o cpf já está cadastrado
-      const cpfExiste = await Usuario.findOne({ where: { cpf: cpf } });
+      const cpfExiste = await Usuarios.findOne({ where: { cpf: cpf } });
       if (cpfExiste) {
         return res.status(409).json({ error: "CPF já cadastrado." });
       }
@@ -128,6 +131,9 @@ class UsuarioController {
         longitude,
       });
 
+      //criptografa a senha
+      const hashedSenha = await bcrypt.hash(senha, 10);
+
       const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
@@ -135,7 +141,7 @@ class UsuarioController {
         dataNascimento,
         telefone,
         email,
-        senha,
+        senha: hashedSenha,
         criadoPor,
         tipoUsuario,
       });
