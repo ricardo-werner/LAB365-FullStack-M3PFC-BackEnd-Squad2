@@ -1,17 +1,19 @@
 const {
-    adicionarUsuarioAdmin,
-    adicionarUsuarioComprador,
-    login,
+  adicionarUsuarioAdmin,
+  adicionarUsuarioComprador,
+  login,
 } = require("../controllers/usuario.controller");
 
 const { Router } = require("express");
 
 class UsuarioRouter {
-    routesFromUsuario () {
-        const usuarioRoutes = Router();
+  routesFromUsuario() {
+    const usuarioRoutes = Router();
 
-        usuarioRoutes.post("usuario/login", login);
-        usuarioRoutes.post("usuario/cadastrar", adicionarUsuarioComprador);
-        usuarioRoutes.post("usuario/admin/cadastro", adicionarUsuarioAdmin);
-    }
+    usuarioRoutes.post("usuario/login", login);
+    usuarioRoutes.post("usuario/cadastrar", adicionarUsuarioComprador);
+    usuarioRoutes.post("usuario/admin/cadastro", adicionarUsuarioAdmin);
+  }
 }
+
+module.exports = UsuarioRouter();
