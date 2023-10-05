@@ -8,6 +8,23 @@ const bcrypt = require('bcrypt');
 config()
 
 class VendasController {
+    async createOneVenda(request, response) {
+        try {
+            const { id_usuario, id_produto, quantidade, valor_total } = request.body
+
+            const venda = await Vendas.create({ id_usuario, id_produto, quantidade, valor_total })
+
+            return response.status(200).send(venda)
+        } catch (error) {
+            const status = error.message.status || 400
+            const message = error.message.msg || error.message
+            return response.status(parseInt(status)).send({
+                message: "Falha na operação de criar uma venda",
+                cause: message
+            })
+        }
+    }
+
     async listAllVendas(request, response) {
         try {
             const vendas = await Vendas.findAll()
@@ -23,13 +40,13 @@ class VendasController {
         }
     }
 
-    async listOneVendasId(request, response) {
+    async listOneVenda(request, response) {
         try {
             const { id } = request.params
 
-            const vendas = await Vendas.findByPk(id)
+            const venda = await Vendas.findByPk(id)
 
-            return response.status(200).send(vendas)
+            return response.status(200).send(venda)
         } catch (error) {
             const status = error.message.status || 400
             const message = error.message.msg || error.message
@@ -40,13 +57,13 @@ class VendasController {
         }
     }
 
-    async createOneVendas(request, response) {
+    async createOneVenda(request, response) {
         try {
             const { id_usuario, id_produto, quantidade, valor_total } = request.body
 
-            const vendas = await Vendas.create({ id_usuario, id_produto, quantidade, valor_total })
+            const venda = await Vendas.create({ id_usuario, id_produto, quantidade, valor_total })
 
-            return response.status(200).send(vendas)
+            return response.status(200).send(venda)
         } catch (error) {
             const status = error.message.status || 400
             const message = error.message.msg || error.message
@@ -57,21 +74,21 @@ class VendasController {
         }
     }
 
-    async updateOneVendas(request, response) {
+    async updateOneVenda(request, response) {
         try {
             const { id } = request.params
             const { id_usuario, id_produto, quantidade, valor_total } = request.body
 
-            const vendas = await Vendas.findByPk(id)
+            const venda = await Vendas.findByPk(id)
 
-            vendas.id_usuario = id_usuario
-            vendas.id_produto = id_produto
-            vendas.quantidade = quantidade
-            vendas.valor_total = valor_total
+            venda.id_usuario = id_usuario
+            venda.id_produto = id_produto
+            venda.quantidade = quantidade
+            venda.valor_total = valor_total
 
-            await vendas.save()
+            await venda.save()
 
-            return response.status(200).send(vendas)
+            return response.status(200).send(venda)
         } catch (error) {
             const status = error.message.status || 400
             const message = error.message.msg || error.message
@@ -84,21 +101,21 @@ class VendasController {
 
 
     // //Definir o endpoint para deletar usuário (deleção lógica)
-    // async deleteOneVendas(require, response) {
+    // async deleteOneVenda(require, response) {
     //     try {
     //         const { id } = require.params;
 
-    //         const vendas = await Vendas.findByPk(id, { paranoid: true });
-    //         if (!vendas) {
+    //         const venda = await Vendas.findByPk(id, { paranoid: true });
+    //         if (!venda) {
     //             return response.status(404).send({ error: 'Venda não encontrada' });
     //         }
 
-    //         if (vendas.status === 'ativo') {
-    //             vendas.status = 'inativo';
-    //             await vendas.destroy(); // Realiza o Soft Delete
+    //         if (venda.status === 'ativo') {
+    //             venda.status = 'inativo';
+    //             await venda.destroy(); // Realiza o Soft Delete
     //         }
 
-    //         return response.status(200).send(vendas);
+    //         return response.status(200).send(venda);
 
     //     } catch (error) {
     //         const status = error.message.status || 400
