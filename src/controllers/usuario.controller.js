@@ -1,4 +1,5 @@
-const { Usuarios, Enderecos } = require("../models");
+const { Usuarios } = require("../models/usuarios");
+const { Enderecos } = require("../models/enderecos");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 class UsuarioController {
@@ -316,3 +317,5 @@ class UsuarioController {
     }
   }
 }
+
+module.exports = new UsuarioController();

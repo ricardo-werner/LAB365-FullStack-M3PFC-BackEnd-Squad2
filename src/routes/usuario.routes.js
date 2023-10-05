@@ -13,7 +13,9 @@ class UsuarioRouter {
     usuarioRoutes.post("usuario/login", login);
     usuarioRoutes.post("usuario/cadastrar", adicionarUsuarioComprador);
     usuarioRoutes.post("usuario/admin/cadastro", adicionarUsuarioAdmin);
+
+    return usuarioRoutes;
   }
 }
 
-module.exports = UsuarioRouter();
+module.exports = new UsuarioRouter();
