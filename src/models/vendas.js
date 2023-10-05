@@ -36,7 +36,7 @@ const Vendas = connection.define(
       },
     },
     precoUnitario: DECIMAL(10, 2),
-    totalCompra: INTEGER,
+    quantidadeProdutoVendido: INTEGER,
     total: DECIMAL(10, 2),
     tipoPagamento: ENUM(
       'cartão de crédito',
