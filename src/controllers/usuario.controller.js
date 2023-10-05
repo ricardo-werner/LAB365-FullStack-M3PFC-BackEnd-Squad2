@@ -1,3 +1,4 @@
+const { Usuarios, Enderecos } = require("../models");
 class UsuarioController {
   async adicionarUsuario(req, res) {
     try {
@@ -22,6 +23,25 @@ class UsuarioController {
         tipoUsuario,
       } = req.body;
 
+      // Verificação de autenticação JWT
+      const token = req.header("Authorization");
+      if (!token) {
+        return res.status(401).json({ error: "Autenticação JWT inexistente." });
+      }
+
+      try {
+        const decoded = jwt.verify(token, "CHAVE SECRETA"); // Substitua 'suaChaveSecreta' pela sua chave secreta JWT
+        const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
+        // Verificação se o usuário é ADMIN
+        if (tipoUsuario !== "ADMIN") {
+          return res
+            .status(403)
+            .json({ error: "Acesso negado para este tipo de usuário." });
+        }
+        // ... (seu código existente para validação e criação de usuário)
+      } catch (error) {
+        return res.status(401).json({ error: "Token JWT inválido." });
+      }
       // Verifica se os campos obrigatórios estão ausentes ou vazios
       if (
         !enderecoId ||
@@ -77,7 +97,7 @@ class UsuarioController {
 
       if (!/^\d{11}$/.test(cpf)) {
         // Verifica o formato do cpf
-        return res.status(400).json("O campo cpf está em um formato inválido.");
+        return res.status(400).json("O campo CPF está em um formato inválido.");
       } else if (!/^[0-9]+$/.test(cpf)) {
         // Verifica se há apenas números
         return res.status(400).json("O campo CPF deve conter apenas números.");
@@ -96,7 +116,7 @@ class UsuarioController {
       }
 
       //Adiciona o endereço no BD
-      const endereco = await Endereco.create({
+      const endereco = await Enderecos.create({
         cep,
         logradouro,
         numero,
@@ -108,7 +128,7 @@ class UsuarioController {
         longitude,
       });
 
-      const usuario = await Usuario.create({
+      const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
         cpf,
