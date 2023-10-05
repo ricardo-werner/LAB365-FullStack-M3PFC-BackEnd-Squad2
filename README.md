@@ -13,7 +13,7 @@
 - Backend - Node.JS, Express, Sequelize em banco de dados PostgreSQL
 #### Nome do sistema: PharmaSellticos
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/logo.jpg"-->
+  <!--img width="480" src="src/assets/to_readme/logoInst.jpg"-->
 </p>
 
 ### 🔗 Links
