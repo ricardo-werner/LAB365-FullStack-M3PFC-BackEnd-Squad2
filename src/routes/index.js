@@ -9,4 +9,4 @@ routes.use('/api', [
 
 ])
 
-module.exports = routes
+module.exports = routes;
