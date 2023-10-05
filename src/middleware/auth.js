@@ -11,7 +11,7 @@ async function auth(request, response, next) {
         cause: "Token não informado",
       });
     }
-    request["payload"] = verify(authorization, process.env.SECRET_JWT);
+    request["payload"] = verify(authorization, process.env.SECRET_KEY_JWT);
     next();
   } catch (error) {
     return response.status(401).send({

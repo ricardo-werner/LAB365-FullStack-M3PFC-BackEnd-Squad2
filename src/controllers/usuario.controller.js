@@ -129,8 +129,7 @@ class UsuarioController {
           .json("O campo senha está em um formato inválido.");
       }
       //criptografa a senha
-      const hashedSenha = await bcrypt.hash(senha, 6);
-      console.log(hashedSenha);
+      const hashedSenha = await bcrypt.hash(senha, 8);
       //Adiciona o endereço no BD
       const endereco = await Enderecos.create({
         cep,
@@ -294,7 +293,7 @@ class UsuarioController {
       const hashedSenha = await bcrypt.hash(senha, 10);
 
       const enderecoId = endereco.id; //Pega o Id criado do endereço
-      
+
       const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
