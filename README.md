@@ -11,7 +11,10 @@
 #### Criação de sistema de Marketplace (E-Commerce):
 - Frontend - React.JS
 - Backend - Node.JS, Express, Sequelize em banco de dados PostgreSQL
-#### Nome do sistema: ???????
+#### Nome do sistema: PharmaSellticos
+<p align="center">
+  <!--img width="480" src="src/assets/to_readme/logo.jpg"-->
+</p>
 
 ### 🔗 Links
 *** links das redes sociais de cada participante
