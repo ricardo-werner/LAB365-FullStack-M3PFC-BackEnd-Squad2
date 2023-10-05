@@ -2,6 +2,38 @@ const { Usuarios, Enderecos } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 class UsuarioController {
+  async login(req, res) {
+    const { email, senha } = req.body;
+    try {
+      if (!email || !senha) {
+        return res
+          .status(401)
+          .json({ error: "E-mail e senha devem ser preenchidos." });
+      }
+      const usuario = await Usuarios.findOne({ where: { email: email } });
+      if (!usuario) {
+        return res.status(401).json({ error: "Usuário não encontrado." });
+      }
+      const senhaValida = await bcrypt.compare(senha, usuario.senha); // Compara a senha informada com a senha criptografada no BD
+      if (!senhaValida) {
+        return res.status(401).json({ error: "Senha inválida." });
+      }
+      const token = jwt.sign(
+        {
+          id: usuario.id,
+          tipoUsuario: usuario.tipoUsuario,
+          email: usuario.email,
+          nomeCompleto: usuario.nomeCompleto,
+        },
+        "CHAVE SECRETA",
+        { expiresIn: "1d" }
+      );
+      return res.status(200).json({ token: token });
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
   // Método para adicionar um usuário ADMIN
   async adicionarUsuarioAdmin(req, res) {
     try {
