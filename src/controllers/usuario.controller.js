@@ -28,6 +28,18 @@ if (!enderecoId || !cep || !logradouro || !numero || !bairro || !cidade || !esta
     return res.status(422).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
   }
 
+  // Verifica se o email já está cadastrado
+  const emailExiste = await Usuario.findOne({ where: { email: email } });
+  if (emailExiste) {  
+      return res.status(409).json({ error: 'Email já cadastrado.' });
+  }
+
+  // Verifica se o cpf já está cadastrado
+  const cpfExiste = await Usuario.findOne({ where: { cpf: cpf } });
+  if (cpfExiste) {
+      return res.status(409).json({ error: 'CPF já cadastrado.' });
+  }
+
       const usuario = await Usuario.create({
         enderecoId,
         nomeCompleto,
