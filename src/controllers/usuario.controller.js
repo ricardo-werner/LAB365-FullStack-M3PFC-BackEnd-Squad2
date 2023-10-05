@@ -2,6 +2,7 @@ const { Usuarios } = require("../models/usuarios");
 const { Enderecos } = require("../models/enderecos");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+
 class UsuarioController {
   async login(req, res) {
     const { email, senha } = req.body;
@@ -96,7 +97,7 @@ class UsuarioController {
           .status(400)
           .json("O campo email está em um formato inválido.");
       }
-      if (!/^\d{9}$/.test(telefone)) {
+      if (!/^\d{8,10}$/.test(telefone)) {
         // Verifica o formato do telefone
         return res
           .status(400)
@@ -121,7 +122,7 @@ class UsuarioController {
         !/[a-z]/.test(senha) || // Pelo menos uma letra minúscula
         !/[A-Z]/.test(senha) || // Pelo menos uma letra maiúscula
         !/\d/.test(senha) || // Pelo menos um número
-        !/[@#$%^&+=!*]/.test(senha) // Pelo menos um caracter especial
+        !/[@#$%^&+=!*-]/.test(senha) // Pelo menos um caracter especial
       ) {
         return res
           .status(400)
@@ -166,7 +167,6 @@ class UsuarioController {
   async adicionarUsuarioAdmin(req, res) {
     try {
       const {
-        enderecoId,
         cep,
         logradouro,
         numero,
@@ -196,7 +196,7 @@ class UsuarioController {
         const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
-        if (tipoUsuario !== "ADMIN") {
+        if (tipoUsuario !== "Administrador") {
           return res
             .status(403)
             .json({ error: "Acesso negado para este tipo de usuário." });
@@ -208,7 +208,6 @@ class UsuarioController {
       // Verifica se os campos obrigatórios estão ausentes ou vazios
       if (
         //campos de endereço obrigatórios
-        !enderecoId ||
         !cep ||
         !logradouro ||
         !numero ||
@@ -246,7 +245,7 @@ class UsuarioController {
           .status(400)
           .json("O campo email está em um formato inválido.");
       }
-      if (!/^\d{10}$/.test(telefone)) {
+      if (!/^\d{8,10}$/.test(telefone)) {
         // Verifica o formato do telefone
         return res
           .status(400)
@@ -271,7 +270,7 @@ class UsuarioController {
         !/[a-z]/.test(senha) || // Pelo menos uma letra minúscula
         !/[A-Z]/.test(senha) || // Pelo menos uma letra maiúscula
         !/\d/.test(senha) || // Pelo menos um número
-        !/[@#$%^&+=]/.test(senha) // Pelo menos um caracter especial
+        !/[@#$%^&+=!*-]/.test(senha) // Pelo menos um caracter especial
       ) {
         return res
           .status(400)
@@ -294,6 +293,8 @@ class UsuarioController {
       //criptografa a senha
       const hashedSenha = await bcrypt.hash(senha, 10);
 
+      const enderecoId = endereco.id; //Pega o Id criado do endereço
+      
       const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
