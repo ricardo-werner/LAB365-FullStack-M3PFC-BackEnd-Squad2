@@ -195,7 +195,7 @@ class UsuarioController {
       }
 
       try {
-        const decoded = jwt.verify(token, "CHAVE SECRETA"); // Substitua 'suaChaveSecreta' pela sua chave secreta JWT
+        const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
         if (tipoUsuario !== "ADMIN") {
