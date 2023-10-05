@@ -3,6 +3,15 @@ class UsuarioController {
     try {
       const {
         enderecoId,
+        cep,
+        logradouro,
+        numero,
+        bairro,
+        cidade,
+        estado,
+        complemento,
+        latitude,
+        longitude,
         nomeCompleto,
         cpf,
         dataNascimento,
@@ -12,6 +21,13 @@ class UsuarioController {
         criadoPor,
         tipoUsuario,
       } = req.body;
+
+// Verifica se os campos obrigatórios estão ausentes ou vazios
+if (!enderecoId || !cep || !logradouro || !numero || !bairro || !cidade || !estado || //campos de endereço obrigatórios
+!nomeCompleto || !cpf || !dataNascimento || !telefone || !email || !senha || !tipoUsuario) { //campos de usuario obrigatórios
+    return res.status(422).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
+  }
+
       const usuario = await Usuario.create({
         enderecoId,
         nomeCompleto,
