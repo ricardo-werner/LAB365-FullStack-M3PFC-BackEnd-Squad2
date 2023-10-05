@@ -46,7 +46,7 @@ module.exports = {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
       },
-      quantidade_produto_vendido: {
+      quantid_produto_vendido: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
