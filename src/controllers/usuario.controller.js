@@ -41,7 +41,6 @@ class UsuarioController {
   async adicionarUsuarioComprador(req, res) {
     try {
       const {
-        enderecoId,
         cep,
         logradouro,
         numero,
@@ -62,7 +61,6 @@ class UsuarioController {
       // Verifica se os campos obrigatórios estão ausentes ou vazios
       if (
         //campos de endereço obrigatórios
-        !enderecoId ||
         !cep ||
         !logradouro ||
         !numero ||
@@ -98,7 +96,7 @@ class UsuarioController {
           .status(400)
           .json("O campo email está em um formato inválido.");
       }
-      if (!/^\d{10}$/.test(telefone)) {
+      if (!/^\d{9}$/.test(telefone)) {
         // Verifica o formato do telefone
         return res
           .status(400)
@@ -123,15 +121,15 @@ class UsuarioController {
         !/[a-z]/.test(senha) || // Pelo menos uma letra minúscula
         !/[A-Z]/.test(senha) || // Pelo menos uma letra maiúscula
         !/\d/.test(senha) || // Pelo menos um número
-        !/[@#$%^&+=]/.test(senha) // Pelo menos um caracter especial
+        !/[@#$%^&+=!*]/.test(senha) // Pelo menos um caracter especial
       ) {
         return res
           .status(400)
           .json("O campo senha está em um formato inválido.");
       }
       //criptografa a senha
-      const hashedSenha = await bcrypt.hash(senha, 10);
-
+      const hashedSenha = await bcrypt.hash(senha, 6);
+      console.log(hashedSenha);
       //Adiciona o endereço no BD
       const endereco = await Enderecos.create({
         cep,
@@ -144,7 +142,7 @@ class UsuarioController {
         latitude,
         longitude,
       });
-
+      const enderecoId = endereco.id; //Pega o Id criado do endereço
       const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
@@ -153,7 +151,6 @@ class UsuarioController {
         telefone,
         email,
         senha: hashedSenha,
-        criadoPor,
         tipoUsuario: "Comprador",
       });
 

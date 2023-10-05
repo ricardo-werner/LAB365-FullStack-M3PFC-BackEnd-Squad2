@@ -10,9 +10,9 @@ class UsuarioRouter {
   routesFromUsuario() {
     const usuarioRoutes = Router();
 
-    usuarioRoutes.post("usuario/login", login);
-    usuarioRoutes.post("usuario/cadastrar", adicionarUsuarioComprador);
-    usuarioRoutes.post("usuario/admin/cadastro", adicionarUsuarioAdmin);
+    usuarioRoutes.post("/usuario/login", login);
+    usuarioRoutes.post("/usuario/cadastrar", adicionarUsuarioComprador);
+    usuarioRoutes.post("/usuario/admin/cadastro", adicionarUsuarioAdmin);
 
     return usuarioRoutes;
   }
