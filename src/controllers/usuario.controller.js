@@ -14,7 +14,7 @@ class UsuarioController {
       }
       const usuario = await Usuarios.findOne({ where: { email: email } });
       if (!usuario) {
-        return res.status(401).json({ error: "Usuário não encontrado." });
+        return res.status(401).json({ error: "E-mail não encontrado." });
       }
       const senhaValida = await bcrypt.compare(senha, usuario.senha); // Compara a senha informada com a senha criptografada no BD
       if (!senhaValida) {
