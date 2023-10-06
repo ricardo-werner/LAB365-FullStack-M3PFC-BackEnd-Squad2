@@ -10,11 +10,36 @@ config()
 class VendasController {
     async createOneVenda(request, response) {
         try {
-            const { id_usuario, id_produto, quantidade, valor_total } = request.body
+            const {
+                usuario_id,
+                produto_id,
+                vendedor_id,
+                comprador_id,
+                nome_produto,
+                nome_lab,
+                dosagem,
+                descricao,
+                preço_unitario,
+                tipo_produto,
+                quantidade,
+                valor_total } = request.body
 
-            const venda = await Vendas.create({ id_usuario, id_produto, quantidade, valor_total })
+            const venda = await Vendas.create({
+                usuario_id,
+                produto_id,
+                vendedor_id,
+                comprador_id,
+                nome_produto,
+                nome_lab,
+                dosagem,
+                descricao,
+                preço_unitario,
+                tipo_produto,
+                quantidade,
+                valor_total
+            })
 
-            return response.status(200).send(venda)
+            return response.status(201).send(venda)
         } catch (error) {
             const status = error.message.status || 400
             const message = error.message.msg || error.message
@@ -57,32 +82,27 @@ class VendasController {
         }
     }
 
-    async createOneVenda(request, response) {
-        try {
-            const { id_usuario, id_produto, quantidade, valor_total } = request.body
-
-            const venda = await Vendas.create({ id_usuario, id_produto, quantidade, valor_total })
-
-            return response.status(200).send(venda)
-        } catch (error) {
-            const status = error.message.status || 400
-            const message = error.message.msg || error.message
-            return response.status(parseInt(status)).send({
-                message: "Falha na operação de criar a venda",
-                cause: message
-            })
-        }
-    }
-
     async updateOneVenda(request, response) {
         try {
             const { id } = request.params
-            const { id_usuario, id_produto, quantidade, valor_total } = request.body
+            const {
+                nome_produto,
+                nome_lab,
+                dosagem,
+                descricao,
+                preço_unitario,
+                tipo_produto,
+                quantidade,
+                valor_total } = request.body
 
             const venda = await Vendas.findByPk(id)
 
-            venda.id_usuario = id_usuario
-            venda.id_produto = id_produto
+            venda.nome_produto = nome_produto
+            venda.nome_lab = nome_lab
+            venda.dosagem = dosagem
+            venda.descricao = descricao
+            venda.preço_unitario = preço_unitario
+            venda.tipo_produto = tipo_produto
             venda.quantidade = quantidade
             venda.valor_total = valor_total
 
@@ -115,7 +135,7 @@ class VendasController {
     //             await venda.destroy(); // Realiza o Soft Delete
     //         }
 
-    //         return response.status(200).send(venda);
+    //         return response.status(202).send(venda);
 
     //     } catch (error) {
     //         const status = error.message.status || 400
@@ -141,7 +161,7 @@ class VendasController {
     //         venda.status = 'ativo';
     //         await venda.save();
 
-    //         return response.status(200).send(venda);
+    //         return response.status(201).send(venda);
 
     //     } catch (error) {
     //         const status = error.message.status || 400
