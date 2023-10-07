@@ -1,8 +1,8 @@
 const {
-    createOneVenda,
-    listAllVendas,
-    listOneVenda,
-    updateOneVenda,
+    criarVenda,
+    listarVendas,
+    listarVendaId,
+    atualizarVendaId,
     //deleteOneVenda,
     //restoreOneVenda
 } = require('../controllers/vendas.controller')
@@ -12,12 +12,12 @@ const { auth } = require('../middleware/auth')
 class VendaRouter {
     routesFromVendas() {
         const vendasRoutes = Router()
-        vendasRoutes.post('/createOneVenda', createOneVenda)
-        vendasRoutes.get('/listAllVendas', listAllVendas)
-        vendasRoutes.get('/listOneVenda/:id', listOneVenda)
-        vendasRoutes.patch('/updateOneVenda/:id', updateOneVenda)
-        //vendasRoutes.delete('/deleteOneVenda/:id', auth, deleteOneVenda)
-        //vendasRoutes.patch('/restoreOneVenda/:id', auth, restoreOneVenda)
+        vendasRoutes.post('/criarVenda', criarVenda)
+        vendasRoutes.get('/listarVendas', listarVendas)
+        vendasRoutes.get('/listarVendaId/:id', listarVendaId)
+        vendasRoutes.patch('/atualizarVendaId/:id', atualizarVendaId)
+        //vendasRoutes.delete('/deletarVendaId/:id', auth, deletarVendaId)
+        //vendasRoutes.patch('/restaurarVendaId/:id', auth, restoreOneVendaId)
         return vendasRoutes
     }
 }

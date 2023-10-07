@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 config()
 
 class VendasController {
-    async createOneVenda(request, response) {
+    async criarVenda(request, response) {
         try {
             const {
                 usuario_id,
@@ -50,7 +50,7 @@ class VendasController {
         }
     }
 
-    async listAllVendas(request, response) {
+    async listarVendas(request, response) {
         try {
             const vendas = await Vendas.findAll()
 
@@ -65,7 +65,7 @@ class VendasController {
         }
     }
 
-    async listOneVenda(request, response) {
+    async listarVendaId(request, response) {
         try {
             const { id } = request.params
 
@@ -82,7 +82,7 @@ class VendasController {
         }
     }
 
-    async updateOneVenda(request, response) {
+    async atualizarVendaId(request, response) {
         try {
             const { id } = request.params
             const {
@@ -121,7 +121,7 @@ class VendasController {
 
 
     // //Definir o endpoint para deletar usuário (deleção lógica)
-    // async deleteOneVenda(require, response) {
+    // async deletarVendaId(require, response) {
     //     try {
     //         const { id } = require.params;
 
@@ -148,7 +148,7 @@ class VendasController {
     // }
 
     // //Definir o endpoint para restaurar usuário (retauração lógica)
-    // async restoreOneVenda(require, response) {
+    // async restaurarVendaId(require, response) {
     //     try {
     //         const { id } = require.params;
 
