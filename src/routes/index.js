@@ -9,6 +9,8 @@ const routes = new Router();
 routes.use('/api', [
   routesFromUsuario(),
   routesFromVendas(),
+  routesFromCarrinho(),
+  routesFromPedido()
 
 ])
 
