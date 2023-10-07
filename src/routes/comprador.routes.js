@@ -1,9 +1,10 @@
-const { Router } = require('express');
-const { listarComprador } = require('../controller/comprador.controller');
+const { listarComprador } = require('../controllers/comprador.controller');
 const { auth } = require('../middleware/auth');
+const { Router } = require('express');
 
-class Comprador {
-  router() {
+
+class CompradorRouter {
+  routesFromComprador() {
     const compradorRoutes = Router();
 
     compradorRoutes.get('/comprador/:offset/:limite', auth, listarComprador);
@@ -12,4 +13,4 @@ class Comprador {
   }
 }
 
-module.exports = new Comprador().router();
+module.exports = new CompradorRouter();

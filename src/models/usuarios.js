@@ -33,16 +33,7 @@ const Usuarios = connection.define(
     },
     senha: {
       type: STRING,
-      validate: {
-        len: {
-          args: [8, 20],
-          msg: 'Senha deve conter mais de 8 caracteres.',
-        },
-        is: {
-          args: /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,12}$/,
-          msg: 'Senha precisa incluir letras minúsculas, números e pelo menos um caractere especial.',
-        },
-      },
+      allowNull: false,
     },
     criadoPor: {
       type: STRING,
