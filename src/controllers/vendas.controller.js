@@ -1,10 +1,5 @@
 const { Vendas } = require('../models/vendas')
-const { senha } = require('../models/usuarios')
-const { SECRET_KEY_JWT } = require('../config/database.config')
 const { config } = require('dotenv')
-const { sign } = require('jsonwebtoken')
-const { response } = require('express')
-const bcrypt = require('bcrypt');
 config()
 
 class VendasController {
