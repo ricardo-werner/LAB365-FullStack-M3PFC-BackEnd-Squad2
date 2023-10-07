@@ -1,14 +1,15 @@
-const { STRING, ENUM, DATE, INTEGER } = require('sequelize');
-const { connection } = require('../database/connection');
+
+const { STRING, ENUM, DATE, INTEGER } = require("sequelize");
+const { connection } = require("../database/connection");
 
 const Usuarios = connection.define(
-  'usuarios',
+  "usuarios",
   {
     enderecoId: {
       type: INTEGER,
       references: {
-        model: 'enderecos',
-        key: 'id',
+        model: "enderecos",
+        key: "id",
       },
     },
     nomeCompleto: STRING,
@@ -18,7 +19,7 @@ const Usuarios = connection.define(
       validate: {
         is: {
           args: /^[0-9]{11}$/, // Validação para garantir que o CPF contenha 11 números
-          msg: 'O CPF deve conter exatamente 11 números.',
+          msg: "O CPF deve conter exatamente 11 números.",
         },
       },
     },
@@ -40,8 +41,8 @@ const Usuarios = connection.define(
       allowNull: true,
     },
     tipoUsuario: {
-      type: ENUM('Administrador', 'Comprador'),
-      defaultValue: 'Comprador',
+      type: ENUM("Administrador", "Comprador"),
+      defaultValue: "Comprador",
     },
     createdAt: DATE,
     updatedAt: DATE,
