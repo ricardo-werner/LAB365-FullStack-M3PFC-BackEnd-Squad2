@@ -328,7 +328,7 @@ class UsuarioController {
         email,
         senha: hashedSenha,
         criadoPor,
-        tipoUsuario,
+        tipoUsuario: "Administrador",
       });
 
       return res
