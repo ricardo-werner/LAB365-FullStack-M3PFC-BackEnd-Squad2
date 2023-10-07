@@ -60,22 +60,22 @@ class UsuarioController {
       } = req.body;
 
       // Verifica se os campos obrigatórios estão ausentes ou vazios
-      const camposEmFalta = []
+      const camposEmFalta = [];
       // Objeto com mensagens de erro personalizadas
       const mensagensErro = {
-        cep: 'O campo CEP é obrigatório.',
-        logradouro: 'O campo Logradouro é obrigatório.',
-        numero: 'O campo Número é obrigatório.',
-        bairro: 'O campo Bairro é obrigatório.',
-        cidade: 'O campo Cidade é obrigatório.',
-        estado: 'O campo Estado é obrigatório.',
-        nomeCompleto: 'O campo Nome Completo é obrigatório.',
-        cpf: 'O campo CPF é obrigatório.',
-        dataNascimento: 'O campo Data de Nascimento é obrigatório.',
-        telefone: 'O campo Telefone é obrigatório.',
-        email: 'O campo Email é obrigatório.',
-        senha: 'O campo Senha é obrigatório.',
-        tipoUsuario: 'O campo Tipo de Usuário é obrigatório.',
+        cep: "O campo CEP é obrigatório.",
+        logradouro: "O campo Logradouro é obrigatório.",
+        numero: "O campo Número é obrigatório.",
+        bairro: "O campo Bairro é obrigatório.",
+        cidade: "O campo Cidade é obrigatório.",
+        estado: "O campo Estado é obrigatório.",
+        nomeCompleto: "O campo Nome Completo é obrigatório.",
+        cpf: "O campo CPF é obrigatório.",
+        dataNascimento: "O campo Data de Nascimento é obrigatório.",
+        telefone: "O campo Telefone é obrigatório.",
+        email: "O campo Email é obrigatório.",
+        senha: "O campo Senha é obrigatório.",
+        tipoUsuario: "O campo Tipo de Usuário é obrigatório.",
       };
 
       // Verifica os campos obrigatórios
@@ -87,7 +87,7 @@ class UsuarioController {
 
       // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
-        return res.status(422).json({ error: camposEmFalta.join('\n') });
+        return res.status(422).json({ error: camposEmFalta.join("\n") });
       }
       // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
@@ -107,23 +107,27 @@ class UsuarioController {
           .status(400)
           .json("O campo email está em um formato inválido.");
       }
+      // Verifica o formato do telefone
       if (!/^\d{8,10}$/.test(telefone)) {
-        // Verifica o formato do telefone
         return res
           .status(400)
           .json("O campo telefone está em um formato inválido.");
-      } else if (!/^[0-9]+$/.test(telefone)) {
-        // Verifica se há apenas números
+      }
+
+      // Verifica se há apenas números no telefone
+      if (!/^[0-9]+$/.test(telefone)) {
         return res
           .status(400)
           .json("O campo telefone deve conter apenas números.");
       }
 
+      // Verifica o formato do CPF
       if (!/^\d{11}$/.test(cpf)) {
-        // Verifica o formato do cpf
         return res.status(400).json("O campo CPF está em um formato inválido.");
-      } else if (!/^[0-9]+$/.test(cpf)) {
-        // Verifica se há apenas números
+      }
+
+      // Verifica se há apenas números no CPF
+      if (!/^[0-9]+$/.test(cpf)) {
         return res.status(400).json("O campo CPF deve conter apenas números.");
       }
 
