@@ -4,6 +4,8 @@ const { routesFromVendas } = require('./vendas.routes')
 const { routesFromCarrinho } = require('./carrinho.routes')
 const { routesFromPedido } = require('./pedido.routes')
 
+const routes = Router()
+
 routes.use('/api', [
   routesFromUsuario(),
   routesFromVendas(),
@@ -11,4 +13,4 @@ routes.use('/api', [
   routesFromPedido()
 ])
 
-module.exports = Router()
+module.exports = routes
