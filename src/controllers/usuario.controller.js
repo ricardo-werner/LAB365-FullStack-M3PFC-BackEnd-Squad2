@@ -118,7 +118,7 @@ class UsuarioController {
       }
 
       if (
-        senha.length < 8 ||
+        senha.length < 8 || //Não pode ser senha com menos de 8 caracteres
         !/[a-z]/.test(senha) || // Pelo menos uma letra minúscula
         !/[A-Z]/.test(senha) || // Pelo menos uma letra maiúscula
         !/\d/.test(senha) || // Pelo menos um número
