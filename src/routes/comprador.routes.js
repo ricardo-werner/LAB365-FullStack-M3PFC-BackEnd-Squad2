@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { listarComprador } = require('../controller/comprador.controller');
+const { listarComprador } = require('../controllers/comprador.controller');
 const { auth } = require('../middleware/auth');
 
 class Comprador {
