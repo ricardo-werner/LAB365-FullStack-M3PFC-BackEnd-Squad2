@@ -3,16 +3,20 @@ const { auth } = require("../middleware/auth");
 
 const {
   cadastrarProduto,
-  listarProdutos,
-  listarProduto,
+  listarProdutosAdmin,
+  filtrarProdutos,
+  detalharProduto,
+  atualizarProduto,
 } = require("../controllers/produtos.controller");
 
 class ProdutosRoutes {
   routesFromProduto() {
     const produtosRoutes = Router();
-    produtosRoutes.post("/products/admin", cadastrarProduto);
-    produtosRoutes.get("/products/admin/:offset/:limit", listarProdutos);
-    produtosRoutes.get("/produto/:produtoId", listarProduto);
+    produtosRoutes.post("/produtos/admin", cadastrarProduto);
+    produtosRoutes.get("/produto/admin", listarProdutosAdmin);
+    produtosRoutes.get("/produto/:offset/:limit", filtrarProdutos);
+    produtosRoutes.get("/produto/:produtoId", detalharProduto);
+    produtosRoutes.patch("/produto/admin/:produtoId", atualizarProduto);
     return produtosRoutes;
   }
 }

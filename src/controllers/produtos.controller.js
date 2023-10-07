@@ -23,22 +23,28 @@ class ProdutosController {
         totalEstoque,
       } = request.body;
 
-      console.log(request.body);
+      //*TO-DO
+      //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
 
-      if (
-        !usuarioId ||
-        !nomeProduto ||
-        !nomeLab ||
-        !imagemProduto ||
-        !dosagem ||
-        !descricao ||
-        !precoUnitario ||
-        !tipoProduto ||
-        !totalEstoque
-      ) {
-        return response.status(422).send({
-          message: "Todos os campos são obrigatórios!",
-        });
+      // Verificação de autenticação JWT
+      const token = request.header("Authorization");
+      if (!token) {
+        return response
+          .status(401)
+          .json({ error: "Autenticação JWT inexistente." });
+      }
+
+      try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
+        const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
+        // Verificação se o usuário é ADMIN
+        if (tipoUsuario !== "Administrador") {
+          return response
+            .status(403)
+            .json({ error: "Acesso negado para este tipo de usuário." });
+        }
+      } catch (error) {
+        return response.status(401).json({ error: "Token JWT inválido." });
       }
 
       if (tipoProduto !== "Controlado" && tipoProduto !== "Não Controlado") {
@@ -59,7 +65,31 @@ class ProdutosController {
         });
       }
 
-      console.log(tipoProduto);
+      // Verifica se os campos obrigatórios estão ausentes ou vazios
+      const camposEmFalta = [];
+      // Objeto com mensagens de erro personalizadas
+      const mensagensErro = {
+        usuarioId: "O ID de Usuário é obrigatório.",
+        nomeProduto: "O Nome do Produto é obrigatório.",
+        nomeLab: "O Nome do Laboratório é obrigatório.",
+        imagemProduto: "O Link da Imagem é obrigatório.",
+        dosagem: "O campo Dosagem é obrigatório.",
+        precoUnitario: "O campo Preço Unitário é obrigatório.",
+        tipoProduto: "O Tipo de Produto é obrigatório.",
+        totalEstoque: "O Estoque é obrigatório.",
+      };
+
+      // Verifica os campos obrigatórios
+      for (const campo in mensagensErro) {
+        if (!request.body[campo]) {
+          camposEmFalta.push(mensagensErro[campo]);
+        }
+      }
+
+      // Se houver campos em falta, retorne o status 422 com as mensagens de erro
+      if (camposEmFalta.length > 0) {
+        return response.status(422).json({ error: camposEmFalta.join("\n") });
+      }
 
       const data = await Produtos.create({
         usuarioId,
@@ -80,68 +110,53 @@ class ProdutosController {
     } catch (error) {
       console.error(error.message);
       return response.status(400).send({
-        message: "Erro ao cadastrar o remedio!",
+        message: "Erro ao cadastrar o Produto!",
         error: error.message,
       });
     }
   }
 
-  /*
-Endpoint Privado
-GET /products/admin/:offset/:limit
-
-Objetivo: Este endpoint deve listar todos os produtos cadastrados daquele usuário administrador
-O campo userId deve ser usado através do payload do JWT do usuário ADMIN para listar os produtos deste usuário.
-
-O endpoint deve utilizar os path params offset e limit para realizar paginação. Retornar 20 itens no máximo na página.
-
-Na requisição, utilizar o query params para os campos name, typeProduct  como filtro e totalStock como ordenação.
-
-Resposta da requisição:
-200 se for sucesso, retornar um array de objetos contendo o resultado da busca contendo o contador do resultado máximo. 
-204 se for sucesso, mas se não tiver resultados para mostrar.
-401  Exceção quando tentar executar o endpoint sem autenticação.
-403  Exceção quando o JWT for de comprador, este endpoint somente pode ser utilizado por um usuário TYPE_USER === “ADMIN”.
-*/
-
-  async listarProdutos(request, response) {
+  async listarProdutosAdmin(request, response) {
     try {
-      //const payload = { usuarioId: user.usuarioId };
-      const { offset, limit } = request.params;
-      const { nomeProduto, tipoProduto } = request.query;
+      //*TO-DO
+      //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
 
-      if (limit > 20) {
-        return response.status(400).json({
-          message: "O limite deve ser menor ou igual à 20",
-        });
+      // Verificação de autenticação JWT
+      const token = request.header("Authorization");
+      if (!token) {
+        return response
+          .status(401)
+          .json({ error: "Autenticação JWT inexistente." });
       }
 
-      console.log(nomeProduto)
+      try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
+        const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
+        // Verificação se o usuário é ADMIN
+        if (tipoUsuario !== "Administrador") {
+          return response
+            .status(403)
+            .json({ error: "Acesso negado para este tipo de usuário." });
+        }
+      } catch (error) {
+        return response.status(401).json({ error: "Token JWT inválido." });
+      }
+      const { nomeProduto, tipoProduto } = request.query;
 
-      const { count, rows } = await Produtos.findAndCountAll({
-        // where: {
-        //   nomeProduto: nomeProduto,
-        //   tipoProduto: tipoProduto,
-        // },
-        offset: offset,
-        limit: limit,
+      const produto = await Produtos.findAll({
+        where: {
+          nomeProduto: nomeProduto,
+          tipoProduto: tipoProduto,
+        },
         order: [["totalEstoque", "DESC"]],
       });
 
-      console.log(count)
-
-      if (offset > rows.length) {
+      if (produto.length == 0) {
         return response.status(204).send({});
       }
 
-      if (rows.length == 0) {
-        return response.status(200).send({
-          message: "Nenhum produto cadastrado!",
-        });
-      }
-
       return response.status(200).send({
-        rows, total: count,
+        produto,
       });
     } catch (error) {
       console.error(error.message);
@@ -152,17 +167,64 @@ Resposta da requisição:
     }
   }
 
-  /*
-Endpoint Privado
-GET /produto/:offset/:limite
-
-Objetivo: Este endpoint deve listar todos os produtos cadastrados na aplicação
-Utilizar o query params para os campos nome, tipo_produto  como filtro e total_estoque como ordenação
-O endpoint deve utilizar os path params offset e limite para realizar paginação. Retornar 20 itens no máximo na página.
-*/
-
-  async listarProduto(request, response) {
+  async filtrarProdutos(request, response) {
     try {
+      //*TO-DO
+      //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
+
+      // Verificação de autenticação JWT
+      const token = request.header("Authorization");
+      if (!token) {
+        return response
+          .status(401)
+          .json({ error: "Autenticação JWT inexistente." });
+      }
+
+      const { offset, limit } = request.params;
+      const { nomeProduto, tipoProduto } = request.query;
+
+      if (limit > 20) {
+        return response.status(400).json({
+          message: "O limite deve ser menor ou igual à 20",
+        });
+      }
+
+      const produto = await Produtos.findAll({
+        where: {
+          nomeProduto: nomeProduto,
+          tipoProduto: tipoProduto,
+        },
+        offset: offset,
+        limit: limit,
+        order: [["totalEstoque", "DESC"]],
+      });
+
+      if (produto.length == 0) {
+        return response.status(204).send({});
+      }
+
+      return response.status(200).send({
+        produto,
+        "Total de produtos filtrados": produto.length,
+      });
+    } catch (error) {
+      console.error(error.message);
+      return response.status(400).send({
+        message: "Erro ao listar o produto!",
+        error: error.message,
+      });
+    }
+  }
+
+  async detalharProduto(request, response) {
+    try {
+      const token = request.header("Authorization");
+      if (!token) {
+        return response
+          .status(401)
+          .json({ error: "Autenticação JWT inexistente." });
+      }
+
       const { produtoId } = request.params;
 
       const produto = await Produtos.findOne({
@@ -171,7 +233,7 @@ O endpoint deve utilizar os path params offset e limite para realizar paginaçã
 
       if (!produto) {
         return response.status(404).send({
-          message: "Produto não encontrado!",
+          message: `Produto com o ID ${produtoId} não encontrado!`,
         });
       }
 
@@ -187,35 +249,92 @@ O endpoint deve utilizar os path params offset e limite para realizar paginaçã
     }
   }
 
-  /*
-Endpoint Privado
-PATCH /produto/admin/:produto_id
+  async atualizarProduto(request, response) {
+    try {
+      const { produtoId } = request.params;
 
-Objetivo: Este endpoint deve atualizar alguns campos do produto na aplicação.
-O campo usuario_id deve ser usado através do payload do JWT do usuário ADMIN
+      const { nomeProduto, imagemProduto, dosagem, totalEstoque } =
+        request.body;
 
-No corpo da requisição, deve enviar um ou todos os campos abaixo para atualizar:
+      //Verificação de autenticação JWT
+      const token = request.header("Authorization");
+      if (!token) {
+        return response
+          .status(401)
+          .json({ error: "Autenticação JWT inexistente." });
+      }
 
-○        (nome) (opcional) // Não pode ser enviado como string vazia
-○        (imagem_link) (opcional) // Não pode ser enviado como string vazia
-○        (dosagem) (opcional) // Não pode ser enviado como string vazia
-○        (total_estoque) (obrigatório) Este campo não pode ser menor que zero.
+      try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
+        const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
+        // Verificação se o usuário é ADMIN
+        if (tipoUsuario !== "Administrador") {
+          return response
+            .status(403)
+            .json({ error: "Acesso negado para este tipo de usuário." });
+        }
+      } catch (error) {
+        return response.status(401).json({ error: "Token JWT inválido." });
+      }
 
-Exemplo JSON:
-{
-"nome": "Paracetamol",
-"imagem_link": "url string",
-"dosagem": "mg",
-"total_estoque": 10
-}
+      const produto = await Produtos.findOne({
+        where: { id: produtoId },
+      });
 
-Resposta da requisição:
-204 se for sucesso.
-401  Exceção quando tentar executar o endpoint sem autenticação.
-403 Exceção quando o JWT for de comprador, este endpoint somente pode ser utilizado por um usuário TIPO_USUSARIO === “ADMIN”
-404 Exceção lançada quando não é encontrado o produto_id junto com o usuario_id
-422 Exceção quando é enviado campos desconhecidos para atualização e/ou campos válidos, porém com valores indevidos de acordo com as regras dos campos.
-*/
+      if (!produto) {
+        return response.status(404).send({
+          message: `Produto com o ID ${produtoId} não encontrado!`,
+        });
+      }
+
+      if (totalEstoque < 0 || !totalEstoque) {
+        return response.status(422).json({
+          message: "O estoque não pode ser negativo ou nulo",
+        });
+      }
+
+      if (nomeProduto === "") {
+        return response.status(422).json({
+          message: "O nome do produto não pode ser vazio",
+        });
+      }
+
+      if (imagemProduto === "") {
+        return response.status(422).json({
+          message: "O link da imagem do produto não pode ser vazio",
+        });
+      }
+
+      if (dosagem === "") {
+        return response.status(422).json({
+          message: "A dosagem não pode ser vazia",
+        });
+      }
+
+      await Produtos.update(
+        {
+          nomeProduto,
+          imagemProduto,
+          dosagem,
+          totalEstoque,
+        },
+        {
+          where: {
+            id: produtoId,
+          },
+        }
+      );
+
+      return response.status(204).send({
+      });
+    } catch (error) {
+      console.error(error.message);
+      return response.status(400).send({
+        message: "Erro ao atualizar o Produto!",
+        error: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new ProdutosController();
