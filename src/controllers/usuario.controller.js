@@ -60,24 +60,34 @@ class UsuarioController {
       } = req.body;
 
       // Verifica se os campos obrigatórios estão ausentes ou vazios
-      if (
-        //campos de endereço obrigatórios
-        !cep ||
-        !logradouro ||
-        !numero ||
-        !bairro ||
-        !cidade ||
-        !estado ||
-        !nomeCompleto || //campos de usuario obrigatórios
-        !cpf ||
-        !dataNascimento ||
-        !telefone ||
-        !email ||
-        !senha
-      ) {
-        return res.status(422).json({
-          error: "Todos os campos obrigatórios devem ser preenchidos.",
-        });
+      const camposEmFalta = []
+      // Objeto com mensagens de erro personalizadas
+      const mensagensErro = {
+        cep: 'O campo CEP é obrigatório.',
+        logradouro: 'O campo Logradouro é obrigatório.',
+        numero: 'O campo Número é obrigatório.',
+        bairro: 'O campo Bairro é obrigatório.',
+        cidade: 'O campo Cidade é obrigatório.',
+        estado: 'O campo Estado é obrigatório.',
+        nomeCompleto: 'O campo Nome Completo é obrigatório.',
+        cpf: 'O campo CPF é obrigatório.',
+        dataNascimento: 'O campo Data de Nascimento é obrigatório.',
+        telefone: 'O campo Telefone é obrigatório.',
+        email: 'O campo Email é obrigatório.',
+        senha: 'O campo Senha é obrigatório.',
+        tipoUsuario: 'O campo Tipo de Usuário é obrigatório.',
+      };
+
+      // Verifica os campos obrigatórios
+      for (const campo in mensagensErro) {
+        if (!req.body[campo]) {
+          camposEmFalta.push(mensagensErro[campo]);
+        }
+      }
+
+      // Se houver campos em falta, retorne o status 422 com as mensagens de erro
+      if (camposEmFalta.length > 0) {
+        return res.status(422).json({ error: camposEmFalta.join('\n') });
       }
       // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
