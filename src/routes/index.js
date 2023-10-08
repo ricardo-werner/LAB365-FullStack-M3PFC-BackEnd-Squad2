@@ -1,13 +1,17 @@
 const { Router } = require('express')
+const { routesFromUsuario } = require('./usuario.routes')
+const { routesFromVendas } = require('./vendas.routes')
+const { routesFromCarrinho } = require('./carrinho.routes')
+const { routesFromPedido } = require('./pedido.routes')
+const { routesFromProduto } = require('./produtos.routes');
+
 const routes = Router()
 
-const { routesFromUsuario } = require("./usuario.routes");
-const { routesFromVendas} = require('./vendas.routes')
-const { routesFromProduto } = require("./produtos.routes");
-
 routes.use('/api', [
-  routesFromVendas(),
   routesFromUsuario(),
+  routesFromVendas(),
+  routesFromCarrinho(),
+  routesFromPedido(),
   routesFromProduto(),
 ])
 
