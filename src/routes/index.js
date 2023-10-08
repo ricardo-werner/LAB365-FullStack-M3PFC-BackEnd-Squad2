@@ -6,6 +6,8 @@ const { routesFromPedido } = require('./pedido.routes')
 const { routesFromProduto } = require('./produtos.routes');
 const { routesFromComprador } = require('./comprador.routes');
 
+const routes = Router()
+
 routes.use('/api', [
   routesFromUsuario(),
   routesFromVendas(),
