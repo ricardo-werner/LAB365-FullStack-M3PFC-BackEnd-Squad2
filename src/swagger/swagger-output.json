@@ -48,16 +48,6 @@
     "application/json"
   ],
   "paths": {
-    "/api-docs": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
     "/api/usuario/login": {
       "post": {
         "tags": [
