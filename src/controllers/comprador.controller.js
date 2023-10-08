@@ -16,7 +16,7 @@ class CompradorController {
 
       const opcoesConsulta = {
         where: {
-          tipoUsuario: 'Comprador',
+          tipoUsuario: "Comprador",
         },
         limit: Math.min(20, parseInt(limite)),
         offset: parseInt(offset),
