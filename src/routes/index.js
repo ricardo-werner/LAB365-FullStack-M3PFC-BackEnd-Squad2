@@ -18,7 +18,7 @@ routes.use('/api', [
   routesFromProduto(),
 ])
 
-router.use("/api-docs", swaggerUi.serve);
-router.get("/api-docs", swaggerUi.setup(swaggerDocument));
+routes.use("/api-docs", swaggerUi.serve);
+routes.get("/api-docs", swaggerUi.setup(swaggerDocument));
 
 module.exports = routes
