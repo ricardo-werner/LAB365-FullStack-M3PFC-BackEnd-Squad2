@@ -10,13 +10,30 @@ const swaggerDocument = require("../swagger/swagger-output.json");
 
 const routes = Router()
 
-routes.use('/api', [
+routes.use("/api", [
   routesFromUsuario(),
+  // #swagger.tags = ['Usuários']
+]);
+
+routes.use("/api", [
   routesFromVendas(),
+  // #swagger.tags = ['Vendas']
+]);
+
+routes.use("/api", [
   routesFromCarrinho(),
+  // #swagger.tags = ['Carrinho']
+]);
+
+routes.use("/api", [
   routesFromPedido(),
+  // #swagger.tags = ['Pedidos']
+]);
+
+routes.use("/api", [
   routesFromProduto(),
-])
+  // #swagger.tags = ['Produtos']
+]);
 
 routes.use("/api-docs", swaggerUi.serve);
 routes.get("/api-docs", swaggerUi.setup(swaggerDocument));
