@@ -1,6 +1,5 @@
-
-const { STRING, ENUM, DATE, INTEGER } = require("sequelize");
-const { connection } = require("../database/connection");
+const { STRING, ENUM, DATE, INTEGER } = require('sequelize');
+const { connection } = require('../database/connection');
 
 const Usuarios = connection.define(
   "usuarios",
