@@ -6,6 +6,9 @@ const { routesFromPedido } = require('./pedido.routes')
 const { routesFromProduto } = require('./produtos.routes');
 const { routesFromComprador } = require('./comprador.routes');
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("../swagger/swagger-output.json");
+
 const routes = Router()
 
 routes.use('/api', [
@@ -16,5 +19,8 @@ routes.use('/api', [
   routesFromProduto(),
   routesFromComprador(),
 ]);
+
+routes.use("/api-docs", swaggerUi.serve);
+routes.get("/api-docs", swaggerUi.setup(swaggerDocument));
 
 module.exports = routes
