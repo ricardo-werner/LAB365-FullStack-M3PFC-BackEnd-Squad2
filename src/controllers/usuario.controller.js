@@ -1,5 +1,6 @@
 const { Usuarios } = require("../models/usuarios");
 const { Enderecos } = require("../models/enderecos");
+const { UsuariosEnderecos } = require("../models/usuariosEnderecos");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -30,8 +31,6 @@ class UsuarioController {
         process.env.SECRET_KEY_JWT,
         { expiresIn: "1d" }
       );
-
-      console.log(token)
       return res
         .status(200)
         .send({ msg: "Usuario logado com sucesso!", token: token });
@@ -169,6 +168,12 @@ class UsuarioController {
         tipoUsuario: "Comprador",
       });
 
+      //Criação de registro na tabela de associação
+      const usuarios_enderecos = await UsuariosEnderecos.create({
+        usuarioId: usuario.id,
+        enderecoId: endereco.id,
+      });
+
       return res
         .status(201)
         .send({ data: "Usuario salvo com sucesso!", usuario: usuario });
@@ -210,8 +215,6 @@ class UsuarioController {
         const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
-        console.lo
-        (tipoUsuario, 'tipo')
         if (tipoUsuario !== "Administrador") {
           return res
             .status(403)
@@ -333,6 +336,12 @@ class UsuarioController {
         senha: hashedSenha,
         criadoPor,
         tipoUsuario: "Administrador",
+      });
+
+      //Criação de registro na tabela de associação
+      const usuarios_enderecos = await UsuariosEnderecos.create({
+        usuarioId: usuario.id,
+        enderecoId: endereco.id,
       });
 
       return res
