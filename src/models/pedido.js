@@ -1,49 +1,14 @@
-const { INTEGER, DECIMAL, ENUM, DATE } = require('sequelize');
+const { INTEGER, ENUM, DATE } = require('sequelize');
 const { connection } = require('../database/connection');
-const { Usuarios } = require('./usuarios');
-const { Produtos } = require('./produtos');
-const { Enderecos } = require('./enderecos');
 
 const Pedido = connection.define('pedido', {
-  compradorId: {
+  vendedor_id: {
     type: INTEGER,
     allowNull: false,
-    references: {
-      model: {
-        tableName: 'usuarios'
-      },
-      key: 'id'
-    }
   },
-  vendedorId: {
+  endereco_id: {
     type: INTEGER,
     allowNull: false,
-    references: {
-      model: {
-        tableName: 'usuarios'
-      },
-      key: 'id'
-    }
-  },
-  produtoId: {
-    type: ARRAY(INTEGER), // Para armazenar vários IDs de produtos
-    allowNull: false,
-    references: {
-      model: {
-        tableName: 'produtos'
-      },
-      key: 'id'
-    }
-  },
-  enderecoId: {
-    type: INTEGER,
-    allowNull: false,
-    references: {
-      model: {
-        tableName: 'enderecos'
-      },
-      key: 'id'
-    }
   },
   quantidade: {
     type: INTEGER,
@@ -53,27 +18,29 @@ const Pedido = connection.define('pedido', {
     type: DECIMAL(10, 2),
     allowNull: false,
   },
-  tipoPagamento: {
-    type: ENUM('Cartão de Crédito', 'Cartão de Débito', 'Boleto', 'Pix', 'Transferencia Bancaria'),
-    defaultValue: 'PIX',
-    allowNull: false
+  tipo_pagamento: {
+    type: ENUM('Cartão de Crédito', 'Cartão de Débito', 'Boleto', 'Pix', 'Transferência Bancária'),
+    defaultValue: 'Pix',
+    allowNull: false,
   },
   status: {
-    type: ENUM('Aberto', 'Concluido', 'Cancelado'),
+    type: ENUM('Aberto', 'Concluído', 'Cancelado'),
     defaultValue: 'Aberto',
-    allowNull: false
+    allowNull: false,
   },
-  createdAt: DATE,
-  updatedAt: DATE,
-},
-  { underscored: true, paranoid: true }
-);
-
-Pedido.belongsTo(Usuarios, { foreignKey: 'compradorId' });
-Pedido.belongsTo(Usuarios, { foreignKey: 'vendedorId' });
-Pedido.belongsTo(Produtos, { foreignKey: 'produtoId' });
-Pedido.belongsTo(Enderecos, {
-  foreignKey: 'usuariosEnderecosId',
+  created_at: {
+    allowNull: false,
+    type: DATE,
+    defaultValue: connection.literal('CURRENT_TIMESTAMP'),
+  },
 });
+
+pedido.associate = (models) => {
+  // Associação com a tabela de junção "pedidoProduto"
+  pedido.belongsToMany(models.produtos, {
+    through: 'pedidoProduto',
+    foreignKey: 'pedido_id',
+  });
+};
 
 module.exports = { Pedido };
