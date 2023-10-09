@@ -211,19 +211,6 @@ class UsuarioController {
         return res.status(401).json({ error: "Autenticação JWT inexistente." });
       }
 
-      try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
-        const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
-        // Verificação se o usuário é ADMIN
-        if (tipoUsuario !== "Administrador") {
-          return res
-            .status(403)
-            .json({ error: "Acesso negado para este tipo de usuário." });
-        }
-        // ... (seu código existente para validação e criação de usuário)
-      } catch (error) {
-        return res.status(401).json({ error: "Token JWT inválido." });
-      }
       // Verifica se os campos obrigatórios estão ausentes ou vazios
       const camposEmFalta = [];
       // Objeto com mensagens de erro personalizadas
