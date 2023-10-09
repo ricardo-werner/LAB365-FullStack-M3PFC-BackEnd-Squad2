@@ -1,30 +1,31 @@
 const { config } = require('dotenv');
 const { verify } = require('jsonwebtoken');
+const { Usuarios } = require('../models/usuarios');
 config();
 
-async function auth(request, response, next) {
+async function auth(req, res, next) {
   try {
-    const { authorization } = request.headers;
-    if (!authorization) {
-      return response.status(401).send({
-        message: 'Autenticação Falhou',
-        cause: 'Token não informado',
-      });
+    const token = req.header('Authorization');
+
+    if (!token) {
+      return res.status(401).json({ error: 'Token não informado ou inválido.' });
     }
 
-    const payload = verify(authorization, process.env.SECRET_KEY_JWT);
+    const payload = verify(token, process.env.SECRET_KEY_JWT);
 
-    if (payload.tipoUsuario !== 'Administrador') {
-      return response.status(403).json({
-        message: 'Acesso negado para este tipo de usuário.',
-      });
+    const usuario = await Usuarios.findByPk(payload.id);
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
     }
 
-    request.payload = payload;
-    next();
+    // Anexar informações do usuário e payload à solicitação para uso posterior, se necessário
+    req.payload = payload;
+    req.usuario = usuario;
+
+    next(); // Prosseguir para o próximo middleware ou rota
   } catch (error) {
-    return response.status(401).send({
-      message: 'Autenticação Falhou',
+    return res.status(401).send({
+      message: 'Autenticação Falhou: Token inválido ou ausente.',
       cause: error.message,
     });
   }

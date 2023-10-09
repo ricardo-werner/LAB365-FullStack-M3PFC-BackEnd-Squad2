@@ -9,7 +9,7 @@ config();
 */
 
 class ProdutosController {
-  async cadastrarProduto(request, response) {
+  async cadastrarProduto(req, res) {
     try {
       const {
         usuarioId,
@@ -21,15 +21,15 @@ class ProdutosController {
         precoUnitario,
         tipoProduto,
         totalEstoque,
-      } = request.body;
+      } = req.body;
 
       //*TO-DO
       //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
 
       // Verificação de autenticação JWT
-      const token = request.header("Authorization");
+      const token = req.header("Authorization");
       if (!token) {
-        return response
+        return res
           .status(401)
           .json({ error: "Autenticação JWT inexistente." });
       }
@@ -39,28 +39,28 @@ class ProdutosController {
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
         if (tipoUsuario !== "Administrador") {
-          return response
+          return res
             .status(403)
             .json({ error: "Acesso negado para este tipo de usuário." });
         }
       } catch (error) {
-        return response.status(401).json({ error: "Token JWT inválido." });
+        return res.status(401).json({ error: "Token JWT inválido." });
       }
 
       if (tipoProduto !== "Controlado" && tipoProduto !== "Não Controlado") {
-        return response.status(400).json({
+        return res.status(400).json({
           message: "Tipo de Produto em formato inválido!",
         });
       }
 
       if (precoUnitario <= 0) {
-        return response.status(400).json({
+        return res.status(400).json({
           message: "O preço deve ser maior que zero",
         });
       }
 
       if (totalEstoque < 0) {
-        return response.status(400).json({
+        return res.status(400).json({
           message: "O estoque não pode ser negativo",
         });
       }
@@ -81,14 +81,14 @@ class ProdutosController {
 
       // Verifica os campos obrigatórios
       for (const campo in mensagensErro) {
-        if (!request.body[campo]) {
+        if (!req.body[campo]) {
           camposEmFalta.push(mensagensErro[campo]);
         }
       }
 
       // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
-        return response.status(422).json({ error: camposEmFalta.join("\n") });
+        return res.status(422).json({ error: camposEmFalta.join("\n") });
       }
 
       const data = await Produtos.create({
@@ -103,28 +103,28 @@ class ProdutosController {
         totalEstoque,
       });
 
-      return response.status(201).send({
+      return res.status(201).send({
         data,
         message: `Produto com o ID: ${data.id} e Nome: ${data.nomeProduto} cadastrado com sucesso!`,
       });
     } catch (error) {
       console.error(error.message);
-      return response.status(400).send({
+      return res.status(400).send({
         message: "Erro ao cadastrar o Produto!",
         error: error.message,
       });
     }
   }
 
-  async listarProdutosAdmin(request, response) {
+  async listarProdutosAdmin(req, res) {
     try {
       //*TO-DO
       //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
 
       // Verificação de autenticação JWT
-      const token = request.header("Authorization");
+      const token = req.header("Authorization");
       if (!token) {
-        return response
+        return res
           .status(401)
           .json({ error: "Autenticação JWT inexistente." });
       }
@@ -134,14 +134,14 @@ class ProdutosController {
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
         if (tipoUsuario !== "Administrador") {
-          return response
+          return res
             .status(403)
             .json({ error: "Acesso negado para este tipo de usuário." });
         }
       } catch (error) {
-        return response.status(401).json({ error: "Token JWT inválido." });
+        return res.status(401).json({ error: "Token JWT inválido." });
       }
-      const { nomeProduto, tipoProduto } = request.query;
+      const { nomeProduto, tipoProduto } = req.query;
 
       const produto = await Produtos.findAll({
         where: {
@@ -152,39 +152,39 @@ class ProdutosController {
       });
 
       if (produto.length == 0) {
-        return response.status(204).send({});
+        return res.status(204).send({});
       }
 
-      return response.status(200).send({
+      return res.status(200).send({
         produto,
       });
     } catch (error) {
       console.error(error.message);
-      return response.status(400).send({
+      return res.status(400).send({
         message: "Erro ao listar o produto!",
         error: error.message,
       });
     }
   }
 
-  async filtrarProdutos(request, response) {
+  async filtrarProdutos(req, res) {
     try {
       //*TO-DO
       //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
 
       // Verificação de autenticação JWT
-      const token = request.header("Authorization");
+      const token = req.header("Authorization");
       if (!token) {
-        return response
+        return res
           .status(401)
           .json({ error: "Autenticação JWT inexistente." });
       }
 
-      const { offset, limit } = request.params;
-      const { nomeProduto, tipoProduto } = request.query;
+      const { offset, limit } = req.params;
+      const { nomeProduto, tipoProduto } = req.query;
 
       if (limit > 20) {
-        return response.status(400).json({
+        return res.status(400).json({
           message: "O limite deve ser menor ou igual à 20",
         });
       }
@@ -200,66 +200,66 @@ class ProdutosController {
       });
 
       if (produto.length == 0) {
-        return response.status(204).send({});
+        return res.status(204).send({});
       }
 
-      return response.status(200).send({
+      return res.status(200).send({
         produto,
         "Total de produtos filtrados": produto.length,
       });
     } catch (error) {
       console.error(error.message);
-      return response.status(400).send({
+      return res.status(400).send({
         message: "Erro ao listar o produto!",
         error: error.message,
       });
     }
   }
 
-  async detalharProduto(request, response) {
+  async detalharProduto(req, res) {
     try {
-      const token = request.header("Authorization");
+      const token = req.header("Authorization");
       if (!token) {
-        return response
+        return res
           .status(401)
           .json({ error: "Autenticação JWT inexistente." });
       }
 
-      const { produtoId } = request.params;
+      const { produtoId } = req.params;
 
       const produto = await Produtos.findOne({
         where: { id: produtoId },
       });
 
       if (!produto) {
-        return response.status(404).send({
+        return res.status(404).send({
           message: `Produto com o ID ${produtoId} não encontrado!`,
         });
       }
 
-      return response.status(200).send({
+      return res.status(200).send({
         produto,
       });
     } catch (error) {
       console.error(error.message);
-      return response.status(400).send({
+      return res.status(400).send({
         message: "Erro ao listar o produto!",
         error: error.message,
       });
     }
   }
 
-  async atualizarProduto(request, response) {
+  async atualizarProduto(req, res) {
     try {
-      const { produtoId } = request.params;
+      const { produtoId } = req.params;
 
       const { nomeProduto, imagemProduto, dosagem, totalEstoque } =
-        request.body;
+        req.body;
 
       //Verificação de autenticação JWT
-      const token = request.header("Authorization");
+      const token = req.header("Authorization");
       if (!token) {
-        return response
+        return res
           .status(401)
           .json({ error: "Autenticação JWT inexistente." });
       }
@@ -269,12 +269,12 @@ class ProdutosController {
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
         if (tipoUsuario !== "Administrador") {
-          return response
+          return res
             .status(403)
             .json({ error: "Acesso negado para este tipo de usuário." });
         }
       } catch (error) {
-        return response.status(401).json({ error: "Token JWT inválido." });
+        return res.status(401).json({ error: "Token JWT inválido." });
       }
 
       const produto = await Produtos.findOne({
@@ -282,31 +282,31 @@ class ProdutosController {
       });
 
       if (!produto) {
-        return response.status(404).send({
+        return res.status(404).send({
           message: `Produto com o ID ${produtoId} não encontrado!`,
         });
       }
 
       if (totalEstoque < 0 || !totalEstoque) {
-        return response.status(422).json({
+        return res.status(422).json({
           message: "O estoque não pode ser negativo ou nulo",
         });
       }
 
       if (nomeProduto === "") {
-        return response.status(422).json({
+        return res.status(422).json({
           message: "O nome do produto não pode ser vazio",
         });
       }
 
       if (imagemProduto === "") {
-        return response.status(422).json({
+        return res.status(422).json({
           message: "O link da imagem do produto não pode ser vazio",
         });
       }
 
       if (dosagem === "") {
-        return response.status(422).json({
+        return res.status(422).json({
           message: "A dosagem não pode ser vazia",
         });
       }
@@ -325,11 +325,11 @@ class ProdutosController {
         }
       );
 
-      return response.status(204).send({
+      return res.status(204).send({
       });
     } catch (error) {
       console.error(error.message);
-      return response.status(400).send({
+      return res.status(400).send({
         message: "Erro ao atualizar o Produto!",
         error: error.message,
       });
