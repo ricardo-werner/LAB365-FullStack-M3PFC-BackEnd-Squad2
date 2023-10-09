@@ -1,4 +1,4 @@
-const { INTEGER, ENUM, DATE } = require('sequelize');
+const { INTEGER, ENUM, DATE, DECIMAL } = require('sequelize');
 const { connection } = require('../database/connection');
 
 const Pedido = connection.define('pedido', {
@@ -35,12 +35,4 @@ const Pedido = connection.define('pedido', {
   },
 });
 
-pedido.associate = (models) => {
-  // Associação com a tabela de junção "pedidoProduto"
-  pedido.belongsToMany(models.produtos, {
-    through: 'pedidoProduto',
-    foreignKey: 'pedido_id',
-  });
-};
-
-module.exports = { Pedido };
+  module.exports = { Pedido };

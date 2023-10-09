@@ -1,6 +1,9 @@
-const { INTEGER, DECIMAL, DATE } = require('sequelize');
+const { INTEGER, DECIMAL, DATE, ARRAY } = require('sequelize');
 const sequelize = require('../config/database.config');
 const { connection } = require('../database/connection');
+const { Pedido } = require('./pedido');
+const { PedidoProduto } = require('./pedidosProdutos');
+
 
 const Carrinho = connection.define('carrinho', {
     usuarioId: {
@@ -43,4 +46,8 @@ const Carrinho = connection.define('carrinho', {
     { underscored: true, paranoid: true }
 );
 
-module.exports = { Carrinho };
+// Adicione os relacionamentos
+Carrinho.belongsTo(Pedido, { foreignKey: 'pedidoId' });
+Carrinho.hasMany(PedidoProduto, { foreignKey: 'carrinhoId' });
+
+module.exports = { Carrinho, Pedido, PedidoProduto };
