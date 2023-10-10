@@ -4,7 +4,7 @@ const { routesFromVendas } = require("./vendas.routes");
 const { routesFromCarrinho } = require("./carrinho.routes");
 const { routesFromPedido } = require("./pedido.routes");
 const { routesFromProduto } = require("./produtos.routes");
-const { routesFromComprador } = require("./comprador.routes");
+
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("../swagger/swagger-output.json");
@@ -34,11 +34,6 @@ routes.use("/api", [
 routes.use("/api", [
   routesFromProduto(),
   // #swagger.tags = ['Produtos']
-]);
-
-routes.use("/api", [
-  routesFromComprador(),
-  // #swagger.tags = ['Comprador']
 ]);
 
 routes.use(
