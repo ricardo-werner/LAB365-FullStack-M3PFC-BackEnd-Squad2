@@ -397,7 +397,7 @@ class UsuarioController {
         return res.status(400).json({ message: 'ID de usuário inválido.' });
       }
 
-      console.log(usuario_id, 'usuario_id');
+    
 
       // Consultar o usuário por ID no banco de dados
       const usuario = await Usuarios.findByPk(usuario_id);
