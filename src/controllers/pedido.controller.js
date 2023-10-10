@@ -26,7 +26,7 @@ class pedidoController {
                 !valorTotal ||
                 !tipoPagamento ||
                 !status) {
-                return response.status(400).json(
+                return response.status(400).json({
                     message: "Dados obrigatórios não foram preenchidos"
                 })
             }
