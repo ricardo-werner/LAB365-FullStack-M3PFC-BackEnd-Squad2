@@ -40,7 +40,6 @@ class UsuarioController {
         { expiresIn: '1d' }
       );
 
-      console.log(token);
       return res
         .status(200)
         .send({ msg: 'Usuario logado com sucesso!', token: token });
@@ -219,7 +218,6 @@ class UsuarioController {
         const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
-        console.lo(tipoUsuario, 'tipo');
         if (tipoUsuario !== 'Administrador') {
           return res
             .status(403)
@@ -398,8 +396,6 @@ class UsuarioController {
         return res.status(400).json({ message: 'ID de usuário inválido.' });
       }
 
-      console.log(usuario_id, 'usuario_id');
-
       // Consultar o usuário por ID no banco de dados
       const usuario = await Usuarios.findByPk(usuario_id);
 
@@ -521,9 +517,6 @@ class UsuarioController {
   async listarEnderecosComprador(req, res) {
     try {
       const usuarioId = req.payload.id;
-
-      console.log(req.payload, 'req.payload');
-      console.log(req.usuario, 'req.usuario');
       // Consulta os endereços cadastrados do usuário com base no usuárioId
       const enderecoIds = await UsuariosEnderecos.findAll({
         where: { usuarioId },
