@@ -11,6 +11,7 @@ class pedidoController {
                 produtoId,
                 enderecoId,
                 quantidade,
+                preco,
                 valorTotal,
                 tipoPagamento,
                 status
