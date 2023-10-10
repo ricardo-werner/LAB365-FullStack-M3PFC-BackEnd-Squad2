@@ -10,10 +10,10 @@ const { auth } = require('../middleware/auth')
 class PedidoRouter {
     routesFromPedido() {
         const pedidoRoutes = Router()
-        pedidoRoutes.post('/criarPedido', criarPedido)
-        pedidoRoutes.get('/listarPedidos', listarPedidos)
-        pedidoRoutes.get('/listarPedidoId/:id', listarPedidoId)
-        pedidoRoutes.delete('/deletarPedidoId/:id', deletarPedidoId)
+        pedidoRoutes.post('/pedido/criar', criarPedido)
+        pedidoRoutes.get('/pedidos/listar', listarPedidos)
+        pedidoRoutes.get('/pedido/listarId/:id', listarPedidoId)
+        pedidoRoutes.delete('/pedido/deletarId/:id', deletarPedidoId)
         return pedidoRoutes
     }
 }

@@ -6,14 +6,27 @@ class pedidoController {
     async criarPedido(req, res) {
         try {
             const {
-                produto_id,
+                compradorId,
+                vendedorId,
+                produtoId,
+                enderecoId,
                 quantidade,
                 preco,
-                total
-            } = req.body;
+                valorTotal,
+                tipoPagamento,
+                status
+            } = request.body;
 
-            if (!produto_id || !quantidade || !preco || !total) {
-                return res.status(400).json({
+            if (!compradorId ||
+                !vendedorId ||
+                !produtoId ||
+                !enderecoId || 
+                !quantidade ||
+                !preco ||
+                !valorTotal ||
+                !tipoPagamento ||
+                !status) {
+                return response.status(400).json(
                     message: "Dados obrigatórios não foram preenchidos"
                 })
             }
@@ -66,7 +79,7 @@ class pedidoController {
                 cause: message
             })
         }
-    }    
+    }
 
     async deletarPedidoId(req, res) {
         try {
