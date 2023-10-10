@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const { auth } = require("../middleware/auth");
+const { Router } = require('express');
+const { auth } = require('../middleware/auth');
 
 const {
   cadastrarProduto,
@@ -7,16 +7,16 @@ const {
   filtrarProdutos,
   detalharProduto,
   atualizarProduto,
-} = require("../controllers/produtos.controller");
+} = require('../controllers/produtos.controller');
 
 class ProdutosRoutes {
   routesFromProduto() {
     const produtosRoutes = Router();
-    produtosRoutes.post("/produtos/admin", auth, cadastrarProduto);
-    produtosRoutes.get("/produto/admin", listarProdutosAdmin);
-    produtosRoutes.get("/produto/:offset/:limit", auth, filtrarProdutos);
-    produtosRoutes.get("/produto/:produtoId", auth,  detalharProduto);
-    produtosRoutes.patch("/produto/admin/:produtoId", atualizarProduto);
+    produtosRoutes.post('/produtos/admin', cadastrarProduto);
+    produtosRoutes.get('/produto/admin', listarProdutosAdmin);
+    produtosRoutes.get('/produto/:offset/:limit', filtrarProdutos);
+    produtosRoutes.get('/produto/:produtoId', detalharProduto);
+    produtosRoutes.patch('/produto/admin/:produtoId', atualizarProduto);
     return produtosRoutes;
   }
 }
