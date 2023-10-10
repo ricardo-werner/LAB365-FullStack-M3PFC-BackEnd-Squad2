@@ -521,7 +521,6 @@ class UsuarioController {
     try {
       const usuarioId = req.payload.id;
 
-      console.log(req.payload, 'req.payload');
       // Consulta os endereços cadastrados do usuário com base no usuárioId
       const enderecoIds = await UsuariosEnderecos.findAll({
         where: { usuarioId },
