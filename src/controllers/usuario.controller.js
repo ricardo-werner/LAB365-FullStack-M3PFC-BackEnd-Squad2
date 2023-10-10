@@ -219,7 +219,6 @@ class UsuarioController {
         const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT); // Decodifica o token
         const { tipoUsuario } = decoded; // Obtém o tipo de usuário do token decodificado
         // Verificação se o usuário é ADMIN
-        console.lo(tipoUsuario, 'tipo');
         if (tipoUsuario !== 'Administrador') {
           return res
             .status(403)
