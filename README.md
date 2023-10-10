@@ -1,3 +1,56 @@
+<h1 align=center>
+LAB365-FullStack-M03-Projeto Final: Marketplace de Farmácia
+</h1>
+
+---
+
+## 🏁 Índice
+
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Features](#-features)
+- [Demonstração da Aplicação](#-demonstração-da-aplicação)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalar e rodar o Backend](#-instalar-e-rodar-o-backend)
+- [Tecnologias](#-tecnologias)
+- [Melhorias](#melhorias)
+- [Autor](#autor)
+- [Licença](#licença)
+- [Status do Projeto](#status-do-projeto)
+
+
+---
+
+### 💻 Sobre o Projeto
+
+<p>
+O projeto tem por objetivo desenvolver um sistema Marketplace de produtos farmacêuticos capaz de fazer a gestão de vários vendedores (farmácias), clientes vendas e dentro de uma única plataforma. 
+</p>
+
+---
+
+### ✨ Features
+
+- [x] Cadastro de usuário
+- [x] Login do Usuário
+- [x] Autenticação e autorizações
+- [x] Atualização do Status do Usuário no Sistema
+- [x] Atualização de Senha do Usuário
+- [x] Listagem de Usuário pelo identificador
+- [x] Cadastro de Depósito
+- [x] Listagem de Depósitos
+- [x] Listagem de Depósito pelo identificador
+- [x] Exclusão de Depósito
+- [x] Cadastro de medicamentos
+- [x] Atualização dos dados de Depósitos
+- [x] Atualização do Status do Depósito no Sistema
+- [x] Cadastro de Medicamento
+- [x] Atualização dos dados de Medicamento
+- [x] Listagem de Medicamentos
+- [x] Listagem de Medicamento pelo identificador
+- [x] Exclusão de Medicamento
+
+---
+
 # M3P-BackEnd-Squad2
 # LAB365-FullStack-M03-ProjFinal-Marketplace
 ## Projeto Avaliativo do Módulo3
