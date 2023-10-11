@@ -173,12 +173,12 @@ class ProdutosController {
       //O campo usuarioId deve ser usado através do payload do JWT do usuário ADMIN
 
       // Verificação de autenticação JWT
-      const token = request.header("Authorization");
-      if (!token) {
-        return response
-          .status(401)
-          .json({ error: "Autenticação JWT inexistente." });
-      }
+      // const token = request.header("Authorization");
+      // if (!token) {
+      //   return response
+      //     .status(401)
+      //     .json({ error: "Autenticação JWT inexistente." });
+      // }
 
       const { offset, limit } = request.params;
       const { nomeProduto, tipoProduto } = request.query;
@@ -206,6 +206,29 @@ class ProdutosController {
       return response.status(200).send({
         produto,
         "Total de produtos filtrados": produto.length,
+      });
+    } catch (error) {
+      console.error(error.message);
+      return response.status(400).send({
+        message: "Erro ao listar o produto!",
+        error: error.message,
+      });
+    }
+  }
+
+  async mostrarTodosProdutos(request, response) {
+    try {
+
+      const produto = await Produtos.findAll({
+        order: [["totalEstoque", "DESC"]],
+      });
+
+      if (produto.length == 0) {
+        return response.status(204).send({});
+      }
+
+      return response.status(200).send({
+        produto,
       });
     } catch (error) {
       console.error(error.message);
@@ -325,8 +348,7 @@ class ProdutosController {
         }
       );
 
-      return response.status(204).send({
-      });
+      return response.status(204).send({});
     } catch (error) {
       console.error(error.message);
       return response.status(400).send({
