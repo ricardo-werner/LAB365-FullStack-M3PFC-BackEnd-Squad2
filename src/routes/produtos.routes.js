@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { auth } = require('../middleware/auth');
+const { checarAdmin } = require('../middleware/checarAdmin');
 
 const {
   cadastrarProduto,
@@ -12,7 +13,7 @@ const {
 class ProdutosRoutes {
   routesFromProduto() {
     const produtosRoutes = Router();
-    produtosRoutes.post('/produtos/admin', cadastrarProduto);
+    produtosRoutes.post('/produtos/admin', auth, checarAdmin, cadastrarProduto);
     produtosRoutes.get('/produto/admin', listarProdutosAdmin);
     produtosRoutes.get('/produto/:offset/:limit', filtrarProdutos);
     produtosRoutes.get('/produto/:produtoId', detalharProduto);
