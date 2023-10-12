@@ -412,15 +412,14 @@ class UsuarioController {
         latitude,
         longitude,
       });
-      // console.log(novoEndereco, 'enderecosUsuario');
 
 
-      await UsuariosEnderecos.create({
+
+      const enderecosUsuario= await UsuariosEnderecos.create({
         usuarioId: usuario.id,
         enderecoId: novoEndereco.id,
       });
 
-   console.log(enderecosUsuario, 'enderecosUsuario');
       return res.status(200).json(enderecosUsuario);
     } catch (error) {
       return res
