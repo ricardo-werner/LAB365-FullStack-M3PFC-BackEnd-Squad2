@@ -14,7 +14,12 @@ class ProdutosRoutes {
   routesFromProduto() {
     const produtosRoutes = Router();
     produtosRoutes.post('/produtos/admin', auth, checarAdmin, cadastrarProduto);
-    produtosRoutes.get('/produto/admin', listarProdutosAdmin);
+    produtosRoutes.get(
+      '/produtos/admin',
+      auth,
+      checarAdmin,
+      listarProdutosAdmin
+    );
     produtosRoutes.get('/produto/:offset/:limit', filtrarProdutos);
     produtosRoutes.get('/produto/:produtoId', detalharProduto);
     produtosRoutes.patch('/produto/admin/:produtoId', atualizarProduto);
