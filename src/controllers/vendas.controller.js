@@ -1,172 +1,245 @@
-const { Vendas } = require('../models/vendas')
-const { config } = require('dotenv')
-config()
+const { Enderecos } = require('../models/enderecos');
+const { Produtos } = require('../models/produtos');
+const { UsuariosEnderecos } = require('../models/usuariosEnderecos');
+const { Vendas } = require('../models/vendas');
+const { config } = require('dotenv');
+config();
 
 class VendasController {
-    async criarVenda(request, response) {
-        try {
-            const {
-                usuario_id,
-                produto_id,
-                vendedor_id,
-                comprador_id,
-                nome_produto,
-                nome_lab,
-                dosagem,
-                descricao,
-                preço_unitario,
-                tipo_produto,
-                quantidade,
-                valor_total } = request.body
+  async criarVenda(req, res) {
+    try {
+      const vendas = req.body;
+      const compradorId = req.usuario.id;
 
-            const venda = await Vendas.create({
-                usuario_id,
-                produto_id,
-                vendedor_id,
-                comprador_id,
-                nome_produto,
-                nome_lab,
-                dosagem,
-                descricao,
-                preço_unitario,
-                tipo_produto,
-                quantidade,
-                valor_total
-            })
-
-            return response.status(201).send(venda)
-        } catch (error) {
-            const status = error.message.status || 400
-            const message = error.message.msg || error.message
-            return response.status(parseInt(status)).send({
-                message: "Falha na operação de criar uma venda",
-                cause: message
-            })
+      for (const venda of vendas) {
+        if (!venda.quantidadeProdutoVendido) {
+          venda.quantidadeProdutoVendido = 0;
         }
-    }
 
-    async listarVendas(request, response) {
-        try {
-            const vendas = await Vendas.findAll()
+        // Obtenha o ID do vendedor do produto relacionado
+        const produto = await Produtos.findOne({
+          where: { id: venda.produtoId },
+        });
 
-            return response.status(200).send(vendas)
-        } catch (error) {
-            const status = error.message.status || 400
-            const message = error.message.msg || error.message
-            return response.status(parseInt(status)).send({
-                message: "Falha na operação de listar as vendas",
-                cause: message
-            })
+        if (!produto) {
+          return res.status(409).json({ message: 'Produto não encontrado.' });
         }
-    }
 
-    async listarVendaId(request, response) {
-        try {
-            const { id } = request.params
-
-            const venda = await Vendas.findByPk(id)
-
-            return response.status(200).send(venda)
-        } catch (error) {
-            const status = error.message.status || 400
-            const message = error.message.msg || error.message
-            return response.status(parseInt(status)).send({
-                message: "Falha na operação de listar a venda",
-                cause: message
-            })
+        const vendedorId = produto.usuarioId;
+        const total = venda.quantidadeProdutoVendido * produto.precoUnitario;
+        const tipoPagamento = venda.tipoPagamento;
+        if (
+          ![
+            'cartão de crédito',
+            'cartão de débito',
+            'PIX',
+            'boleto',
+            'transferência bancária',
+          ].includes(tipoPagamento)
+        ) {
+          return res
+            .status(400)
+            .json({ message: 'Tipo de pagamento inválido.' });
         }
-    }
 
-    async atualizarVendaId(request, response) {
-        try {
-            const { id } = request.params
-            const {
-                nome_produto,
-                nome_lab,
-                dosagem,
-                descricao,
-                preço_unitario,
-                tipo_produto,
-                quantidade,
-                valor_total } = request.body
+        const usuariosEnderecos = await UsuariosEnderecos.findOne({
+          where: { usuarioId: compradorId },
+        });
 
-            const venda = await Vendas.findByPk(id)
-
-            venda.nome_produto = nome_produto
-            venda.nome_lab = nome_lab
-            venda.dosagem = dosagem
-            venda.descricao = descricao
-            venda.preço_unitario = preço_unitario
-            venda.tipo_produto = tipo_produto
-            venda.quantidade = quantidade
-            venda.valor_total = valor_total
-
-            await venda.save()
-
-            return response.status(200).send(venda)
-        } catch (error) {
-            const status = error.message.status || 400
-            const message = error.message.msg || error.message
-            return response.status(parseInt(status)).send({
-                message: "Falha na operação de atualizar a venda",
-                cause: message
-            })
+        if (!usuariosEnderecos) {
+          return res
+            .status(409)
+            .json({ message: 'Endereço do comprador não encontrado.' });
         }
+
+        // Crie o registro de venda
+        await Vendas.create({
+          compradorId: compradorId,
+          vendedorId: vendedorId,
+          produtoId: venda.produtoId,
+          usuariosEnderecosId: usuariosEnderecos.id,
+          precoUnitario: produto.precoUnitario,
+          quantidadeProdutoVendido: venda.quantidadeProdutoVendido,
+          total,
+          tipoPagamento: tipoPagamento,
+        });
+
+        // Atualize a quantidade de produtos na tabela Produtos
+        await Produtos.update(
+          {
+            totalEstoque: produto.totalEstoque - venda.quantidadeProdutoVendido,
+          },
+          {
+            where: { id: venda.produtoId },
+          }
+        );
+      }
+
+      return res
+        .status(201)
+        .json({ message: 'Registros de venda criados com sucesso.' });
+    } catch (error) {
+      const status = error.message.status || 400;
+      const message = error.message.msg || error.message;
+      return res.status(parseInt(status)).send({
+        message: 'Falha na operação de criar uma venda',
+        cause: message,
+      });
     }
+  }
 
+  async listarVendas(req, res) {
+    try {
+      const vendas = await Vendas.findAll();
 
-    // //Definir o endpoint para deletar usuário (deleção lógica)
-    // async deletarVendaId(require, response) {
-    //     try {
-    //         const { id } = require.params;
+      return res.status(200).send(vendas);
+    } catch (error) {
+      const status = error.message.status || 400;
+      const message = error.message.msg || error.message;
+      return res.status(parseInt(status)).send({
+        message: 'Falha na operação de listar as vendas',
+        cause: message,
+      });
+    }
+  }
 
-    //         const venda = await Vendas.findByPk(id, { paranoid: true });
-    //         if (!venda) {
-    //             return response.status(404).send({ error: 'Venda não encontrada' });
-    //         }
+  async listarVendaId(req, res) {
+    try {
+      const { id } = req.params;
 
-    //         if (venda.status === 'ativo') {
-    //             venda.status = 'inativo';
-    //             await venda.destroy(); // Realiza o Soft Delete
-    //         }
+      const venda = await Vendas.findByPk(id);
 
-    //         return response.status(202).send(venda);
+      return res.status(200).send(venda);
+    } catch (error) {
+      const status = error.message.status || 400;
+      const message = error.message.msg || error.message;
+      return res.status(parseInt(status)).send({
+        message: 'Falha na operação de listar a venda',
+        cause: message,
+      });
+    }
+  }
 
-    //     } catch (error) {
-    //         const status = error.message.status || 400
-    //         const message = error.message.msg || error.message
-    //         return response.status(parseInt(status)).send({
-    //             message: "Falha na operação de deletar venda",
-    //             cause: message
-    //         });
-    //     }
-    // }
+  async atualizarVendaId(req, res) {
+    try {
+      const { id } = req.params;
+      const {
+        nome_produto,
+        nome_lab,
+        dosagem,
+        descricao,
+        preço_unitario,
+        tipo_produto,
+        quantidade,
+        valor_total,
+      } = req.body;
 
-    // //Definir o endpoint para restaurar usuário (retauração lógica)
-    // async restaurarVendaId(require, response) {
-    //     try {
-    //         const { id } = require.params;
+      const venda = await Vendas.findByPk(id);
 
-    //         const venda = await Vendas.findByPk(id, { paranoid: false });
-    //         if (!venda) {
-    //             return response.status(404).send({ error: 'Venda não encontrada' });
-    //         }
+      venda.nome_produto = nome_produto;
+      venda.nome_lab = nome_lab;
+      venda.dosagem = dosagem;
+      venda.descricao = descricao;
+      venda.preço_unitario = preço_unitario;
+      venda.tipo_produto = tipo_produto;
+      venda.quantidade = quantidade;
+      venda.valor_total = valor_total;
 
-    //         await venda.restore(); // Realiza o Soft Delete
-    //         venda.status = 'ativo';
-    //         await venda.save();
+      await venda.save();
 
-    //         return response.status(201).send(venda);
+      return res.status(200).send(venda);
+    } catch (error) {
+      const status = error.message.status || 400;
+      const message = error.message.msg || error.message;
+      return res.status(parseInt(status)).send({
+        message: 'Falha na operação de atualizar a venda',
+        cause: message,
+      });
+    }
+  }
 
-    //     } catch (error) {
-    //         const status = error.message.status || 400
-    //         const message = error.message.msg || error.message
-    //         return response.status(parseInt(status)).send({
-    //             message: "Falha na operação de restaurar venda",
-    //             cause: message
-    //         });
-    //     }
-    // }
+  async dashboardVendasAdmin(req, res) {
+    try {
+      const adminId = req.usuario.id;
+      const totalVendasResultado = await Vendas.sum('total', {
+        where: {
+          vendedorId: adminId,
+        },
+      });
+
+      const totalProdutoVendido = await Vendas.sum('quantidadeProdutoVendido', {
+        where: {
+          vendedorId: adminId,
+        },
+      });
+
+      const resultado = {
+        totalVendas: totalVendasResultado || 0,
+        totalQuantidadeVendida: totalProdutoVendido || 0,
+      };
+
+      return res.status(200).json(resultado);
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).json({
+        message: 'Erro interno do servidor',
+        cause: error.message,
+      });
+    }
+  }
+
+  // //Definir o endpoint para deletar usuário (deleção lógica)
+  // async deletarVendaId(require, res) {
+  //     try {
+  //         const { id } = require.params;
+
+  //         const venda = await Vendas.findByPk(id, { paranoid: true });
+  //         if (!venda) {
+  //             return res.status(404).send({ error: 'Venda não encontrada' });
+  //         }
+
+  //         if (venda.status === 'ativo') {
+  //             venda.status = 'inativo';
+  //             await venda.destroy(); // Realiza o Soft Delete
+  //         }
+
+  //         return res.status(202).send(venda);
+
+  //     } catch (error) {
+  //         const status = error.message.status || 400
+  //         const message = error.message.msg || error.message
+  //         return res.status(parseInt(status)).send({
+  //             message: "Falha na operação de deletar venda",
+  //             cause: message
+  //         });
+  //     }
+  // }
+
+  // //Definir o endpoint para restaurar usuário (retauração lógica)
+  // async restaurarVendaId(require, res) {
+  //     try {
+  //         const { id } = require.params;
+
+  //         const venda = await Vendas.findByPk(id, { paranoid: false });
+  //         if (!venda) {
+  //             return res.status(404).send({ error: 'Venda não encontrada' });
+  //         }
+
+  //         await venda.restore(); // Realiza o Soft Delete
+  //         venda.status = 'ativo';
+  //         await venda.save();
+
+  //         return res.status(201).send(venda);
+
+  //     } catch (error) {
+  //         const status = error.message.status || 400
+  //         const message = error.message.msg || error.message
+  //         return res.status(parseInt(status)).send({
+  //             message: "Falha na operação de restaurar venda",
+  //             cause: message
+  //         });
+  //     }
+  // }
 }
 
-module.exports = new VendasController()
+module.exports = new VendasController();
