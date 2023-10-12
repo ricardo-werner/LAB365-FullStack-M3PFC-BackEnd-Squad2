@@ -3,6 +3,7 @@ const {
   login,
   adicionarUsuarioComprador,
   adicionarUsuarioAdmin,
+  adicionarNovoEndereco,
   listarUsuarioPorId,
   listarEnderecosComprador,
   atualizarCompradorPorId,
@@ -18,7 +19,13 @@ class UsuarioRouter {
 
     usuarioRoutes.post('/usuario/login', login);
     usuarioRoutes.post('/usuario/cadastrar', adicionarUsuarioComprador);
-    usuarioRoutes.post('/usuario/admin/cadastro', auth, adicionarUsuarioAdmin);
+    usuarioRoutes.post(
+      '/usuario/admin/cadastro',
+      auth,
+      checarAdmin,
+      adicionarUsuarioAdmin
+    );
+    usuarioRoutes.post('/usuario/novo-endereco', auth, adicionarNovoEndereco);
     usuarioRoutes.get(
       '/comprador/admin/:usuario_id',
       auth,
@@ -32,7 +39,12 @@ class UsuarioRouter {
       checarAdmin,
       atualizarCompradorPorId
     );
-    usuarioRoutes.get('/comprador/:offset/:limite', auth, listarComprador);
+    usuarioRoutes.get(
+      '/comprador/admin/:offset/:limite',
+      auth,
+      checarAdmin,
+      listarComprador
+    );
     usuarioRoutes.post('/usuario/nova-senha', auth, recuperarSenha);
 
     return usuarioRoutes;
