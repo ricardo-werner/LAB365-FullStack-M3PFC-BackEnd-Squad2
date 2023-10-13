@@ -3,6 +3,7 @@ const { connection } = require('../database/connection');
 const { Usuarios } = require('./usuarios');
 const { Produtos } = require('./produtos');
 const { Enderecos } = require('./enderecos');
+const { UsuariosEnderecos } = require('./usuariosEnderecos');
 
 const Vendas = connection.define(
   'vendas',
@@ -54,7 +55,7 @@ const Vendas = connection.define(
 Vendas.belongsTo(Usuarios, { foreignKey: 'compradorId' });
 Vendas.belongsTo(Usuarios, { foreignKey: 'vendedorId' });
 Vendas.belongsTo(Produtos, { foreignKey: 'produtoId' });
-Vendas.belongsTo(Enderecos, {
+Vendas.belongsTo(UsuariosEnderecos, {
   foreignKey: 'usuariosEnderecosId',
 });
 
