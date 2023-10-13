@@ -46,7 +46,7 @@ class VendasController {
           ![
             'cartão de crédito',
             'cartão de débito',
-            'PIX',
+            'pix',
             'boleto',
             'transferência bancária',
           ].includes(tipoPagamento)
@@ -174,7 +174,7 @@ class VendasController {
     }
   }
 
-  async dashboardVendasAdmin(req, res) {
+  async vendasAdminDashboard(req, res) {
     try {
       const adminId = req.usuario.id;
       const totalVendasResultado = await Vendas.sum('total', {
