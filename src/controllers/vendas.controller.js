@@ -1,4 +1,3 @@
-const { Enderecos } = require('../models/enderecos');
 const { Produtos } = require('../models/produtos');
 const { UsuariosEnderecos } = require('../models/usuariosEnderecos');
 const { Vendas } = require('../models/vendas');
@@ -26,7 +25,7 @@ class VendasController {
         if (!produto) {
           vendasValidas = false;
           res.status(409).json({ message: 'Produto não encontrado.' });
-          break; 
+          break;
         }
 
         const vendedorId = produto.usuarioId;
@@ -38,7 +37,7 @@ class VendasController {
             message: `Não temos a quantidade solicitada para o produto: ${produto.nomeProduto} - ID:${produto.id}, Total disponível:${produto.totalEstoque}`,
             estoqueDisponivel: produto.totalEstoque,
           });
-          break; 
+          break;
         }
 
         const tipoPagamento = venda.tipoPagamento;
@@ -53,7 +52,7 @@ class VendasController {
         ) {
           vendasValidas = false;
           res.status(400).json({ message: 'Tipo de pagamento inválido.' });
-          break; 
+          break;
         }
 
         const usuariosEnderecos = await UsuariosEnderecos.findOne({
@@ -61,9 +60,11 @@ class VendasController {
         });
 
         if (!usuariosEnderecos) {
-          vendasValidas = false; 
-          res.status(409).json({ message: 'Endereço do comprador não encontrado.' });
-          break; 
+          vendasValidas = false;
+          res
+            .status(409)
+            .json({ message: 'Endereço do comprador não encontrado.' });
+          break;
         }
 
         // Crie o registro de venda
@@ -189,15 +190,26 @@ class VendasController {
         },
       });
 
+      const produtosEmEstoque = await Produtos.findAll({
+        attributes: [
+          'id',
+          'nomeProduto',
+          'precoUnitario',
+          'nomeLab',
+          'totalEstoque',
+        ],
+      });
+
       const resultado = {
         totalVendas: totalVendasResultado || 0,
         totalQuantidadeVendida: totalProdutoVendido || 0,
+        produtosEmEstoque,
       };
 
       return res.status(200).json(resultado);
     } catch (error) {
       console.error(error.message);
-      return res.status(500).json({
+      return res.status( ).json({
         message: 'Erro interno do servidor',
         cause: error.message,
       });

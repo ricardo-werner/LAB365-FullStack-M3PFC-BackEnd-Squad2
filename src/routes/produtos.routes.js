@@ -20,7 +20,12 @@ class ProdutosRoutes {
       checarAdmin,
       listarProdutosAdmin
     );
-    produtosRoutes.get('/produto/:offset/:limit', filtrarProdutos);
+    produtosRoutes.get(
+      '/produto/:offset/:limit',
+      auth,
+      checarAdmin,
+      filtrarProdutos
+    );
     produtosRoutes.get('/produto/:produtoId', detalharProduto);
     produtosRoutes.patch('/produto/admin/:produtoId', atualizarProduto);
     return produtosRoutes;
