@@ -1,4 +1,3 @@
-const { Enderecos } = require('../models/enderecos');
 const { Produtos } = require('../models/produtos');
 const { UsuariosEnderecos } = require('../models/usuariosEnderecos');
 const { Vendas } = require('../models/vendas');
@@ -7,6 +6,8 @@ config();
 
 class VendasController {
   async criarVenda(req, res) {
+    let vendasValidas = true;
+
     try {
       const vendas = req.body;
       const compradorId = req.usuario.id;
@@ -22,11 +23,23 @@ class VendasController {
         });
 
         if (!produto) {
-          return res.status(409).json({ message: 'Produto não encontrado.' });
+          vendasValidas = false;
+          res.status(409).json({ message: 'Produto não encontrado.' });
+          break;
         }
 
         const vendedorId = produto.usuarioId;
         const total = venda.quantidadeProdutoVendido * produto.precoUnitario;
+
+        if (venda.quantidadeProdutoVendido > produto.totalEstoque) {
+          vendasValidas = false;
+          res.status(400).json({
+            message: `Não temos a quantidade solicitada para o produto: ${produto.nomeProduto} - ID:${produto.id}, Total disponível:${produto.totalEstoque}`,
+            estoqueDisponivel: produto.totalEstoque,
+          });
+          break;
+        }
+
         const tipoPagamento = venda.tipoPagamento;
         if (
           ![
@@ -37,9 +50,9 @@ class VendasController {
             'transferência bancária',
           ].includes(tipoPagamento)
         ) {
-          return res
-            .status(400)
-            .json({ message: 'Tipo de pagamento inválido.' });
+          vendasValidas = false;
+          res.status(400).json({ message: 'Tipo de pagamento inválido.' });
+          break;
         }
 
         const usuariosEnderecos = await UsuariosEnderecos.findOne({
@@ -47,9 +60,11 @@ class VendasController {
         });
 
         if (!usuariosEnderecos) {
-          return res
+          vendasValidas = false;
+          res
             .status(409)
             .json({ message: 'Endereço do comprador não encontrado.' });
+          break;
         }
 
         // Crie o registro de venda
@@ -75,9 +90,11 @@ class VendasController {
         );
       }
 
-      return res
-        .status(201)
-        .json({ message: 'Registros de venda criados com sucesso.' });
+      if (vendasValidas) {
+        return res
+          .status(201)
+          .json({ message: 'Registros de venda criados com sucesso.' });
+      }
     } catch (error) {
       const status = error.message.status || 400;
       const message = error.message.msg || error.message;
@@ -173,15 +190,26 @@ class VendasController {
         },
       });
 
+      const produtosEmEstoque = await Produtos.findAll({
+        attributes: [
+          'id',
+          'nomeProduto',
+          'precoUnitario',
+          'nomeLab',
+          'totalEstoque',
+        ],
+      });
+
       const resultado = {
         totalVendas: totalVendasResultado || 0,
         totalQuantidadeVendida: totalProdutoVendido || 0,
+        produtosEmEstoque,
       };
 
       return res.status(200).json(resultado);
     } catch (error) {
       console.error(error.message);
-      return res.status(500).json({
+      return res.status( ).json({
         message: 'Erro interno do servidor',
         cause: error.message,
       });
