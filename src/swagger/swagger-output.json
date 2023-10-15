@@ -173,11 +173,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "Authorization",
             "in": "header",
             "type": "string"
@@ -256,6 +251,9 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "409": {
             "description": "Conflict"
           },
@@ -268,53 +266,49 @@
         }
       }
     },
-    "/api/criarVenda": {
+    "/api/usuario/novo-endereco": {
       "post": {
         "tags": [
-          "Vendas"
+          "Usuários"
         ],
         "description": "",
         "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "usuario_id": {
+                "cep": {
                   "example": "any"
                 },
-                "produto_id": {
+                "logradouro": {
                   "example": "any"
                 },
-                "vendedor_id": {
+                "numero": {
                   "example": "any"
                 },
-                "comprador_id": {
+                "bairro": {
                   "example": "any"
                 },
-                "nome_produto": {
+                "cidade": {
                   "example": "any"
                 },
-                "nome_lab": {
+                "estado": {
                   "example": "any"
                 },
-                "dosagem": {
+                "complemento": {
                   "example": "any"
                 },
-                "descricao": {
+                "latitude": {
                   "example": "any"
                 },
-                "preço_unitario": {
-                  "example": "any"
-                },
-                "tipo_produto": {
-                  "example": "any"
-                },
-                "quantidade": {
-                  "example": "any"
-                },
-                "valor_total": {
+                "longitude": {
                   "example": "any"
                 }
               }
@@ -322,13 +316,308 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/api/listarVendas": {
+    "/api/comprador/admin/{usuario_id}": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "usuario_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "usuario_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nomeCompleto": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "cpf": {
+                  "example": "any"
+                },
+                "telefone": {
+                  "example": "any"
+                },
+                "tipoUsuario": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/comprador/endereco": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/comprador/admin/{offset}/{limite}": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limite",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "nomeCompleto",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "createdAt",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "ordem",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/usuario/nova-senha": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "novaSenha": {
+                  "example": "any"
+                },
+                "confirmarSenha": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/venda/criar": {
+      "post": {
+        "tags": [
+          "Vendas"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/vendas/listar": {
       "get": {
         "tags": [
           "Vendas"
@@ -341,7 +630,7 @@
         }
       }
     },
-    "/api/listarVendaId/{id}": {
+    "/api/venda/listarId/{id}": {
       "get": {
         "tags": [
           "Vendas"
@@ -362,7 +651,7 @@
         }
       }
     },
-    "/api/atualizarVendaId/{id}": {
+    "/api/vendas/atualizarId/{id}": {
       "patch": {
         "tags": [
           "Vendas"
@@ -416,7 +705,33 @@
         }
       }
     },
-    "/api/criarCarrinho": {
+    "/api/vendas/admin/dashboard": {
+      "get": {
+        "tags": [
+          "Vendas"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/carrinho/criar": {
       "post": {
         "tags": [
           "Carrinho"
@@ -455,7 +770,7 @@
         }
       }
     },
-    "/api/listarCarrinhos": {
+    "/api/carrinhos/listar": {
       "get": {
         "tags": [
           "Carrinho"
@@ -468,7 +783,7 @@
         }
       }
     },
-    "/api/listarCarrinhoId/{id}": {
+    "/api/carrinho/listarId/{id}": {
       "get": {
         "tags": [
           "Carrinho"
@@ -492,7 +807,7 @@
         }
       }
     },
-    "/api/atualizarCarrinhoId/{id}": {
+    "/api/carrinho/atualizarId/{id}": {
       "patch": {
         "tags": [
           "Carrinho"
@@ -540,7 +855,7 @@
         }
       }
     },
-    "/api/deletarCarrinhoId/{id}": {
+    "/api/carrinho/deletarId/{id}": {
       "delete": {
         "tags": [
           "Carrinho"
@@ -564,46 +879,20 @@
         }
       }
     },
-    "/api/criarPedido": {
+    "/api/pedido/criar": {
       "post": {
         "tags": [
           "Pedidos"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "produto_id": {
-                  "example": "any"
-                },
-                "quantidade": {
-                  "example": "any"
-                },
-                "preco": {
-                  "example": "any"
-                },
-                "total": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
           }
         }
       }
     },
-    "/api/listarPedidos": {
+    "/api/pedidos/listar": {
       "get": {
         "tags": [
           "Pedidos"
@@ -616,7 +905,7 @@
         }
       }
     },
-    "/api/listarPedidoId/{id}": {
+    "/api/pedido/listarId/{id}": {
       "get": {
         "tags": [
           "Pedidos"
@@ -640,7 +929,7 @@
         }
       }
     },
-    "/api/deletarPedidoId/{id}": {
+    "/api/pedido/deletarId/{id}": {
       "delete": {
         "tags": [
           "Pedidos"
@@ -726,13 +1015,17 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "422": {
             "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
-      }
-    },
-    "/api/produto/admin": {
+      },
       "get": {
         "tags": [
           "Produtos"
@@ -745,12 +1038,27 @@
             "type": "string"
           },
           {
-            "name": "nomeProduto",
+            "name": "offset",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "tipoProduto",
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "typeProduct",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "order",
             "in": "query",
             "type": "string"
           }
@@ -770,6 +1078,12 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -807,6 +1121,11 @@
             "name": "tipoProduto",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "ordem",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -821,6 +1140,15 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -918,172 +1246,6 @@
           },
           "422": {
             "description": "Unprocessable Entity"
-          }
-        }
-      }
-    },
-    "/api/comprador/admin/{usuario_id}": {
-      "get": {
-        "tags": [
-          "Comprador"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "usuario_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Comprador"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "usuario_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nomeCompleto": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "cpf": {
-                  "example": "any"
-                },
-                "telefone": {
-                  "example": "any"
-                },
-                "tipoUsuario": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/comprador/{offset}/{limite}": {
-      "get": {
-        "tags": [
-          "Comprador"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "limite",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "nomeCompleto",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "createdAt",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "ordem",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
