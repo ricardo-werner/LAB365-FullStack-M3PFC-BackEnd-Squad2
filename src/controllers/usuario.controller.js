@@ -1,16 +1,16 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const { Op, Model, where } = require("sequelize");
-const { Usuarios } = require("../models/usuarios");
-const { Enderecos } = require("../models/enderecos");
-const { UsuariosEnderecos } = require("../models/usuariosEnderecos");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const { Op, Model, where } = require('sequelize');
+const { Usuarios } = require('../models/usuarios');
+const { Enderecos } = require('../models/enderecos');
+const { UsuariosEnderecos } = require('../models/usuariosEnderecos');
 const {
   validarNome,
   validarEmail,
   validarCPF,
   validarTelefone,
   validarTipoUsuario,
-} = require("../utils/validacoes");
+} = require('../utils/validacoes');
 
 class UsuarioController {
   async login(req, res) {
@@ -19,15 +19,15 @@ class UsuarioController {
       if (!email || !senha) {
         return res
           .status(401)
-          .json({ message: "E-mail e senha devem ser preenchidos." });
+          .json({ message: 'E-mail e senha devem ser preenchidos.' });
       }
       const usuario = await Usuarios.findOne({ where: { email: email } });
       if (!usuario) {
-        return res.status(401).json({ message: "E-mail não encontrado." });
+        return res.status(401).json({ message: 'E-mail não encontrado.' });
       }
       const senhaValida = await bcrypt.compare(senha, usuario.senha); // Compara a senha informada com a senha criptografada no BD
       if (!senhaValida) {
-        return res.status(401).json({ message: "Senha inválida." });
+        return res.status(401).json({ message: 'Senha inválida.' });
       }
       const token = jwt.sign(
         {
@@ -37,18 +37,16 @@ class UsuarioController {
           nomeCompleto: usuario.nomeCompleto,
         },
         process.env.SECRET_KEY_JWT,
-        { expiresIn: "1d" }
+        { expiresIn: '1d' }
       );
-      return res
-        .status(200)
-        .send({
-          message: "Usuario logado com sucesso!",
-          token: token,
-          id: usuario.id,
-          tipoUsuario: usuario.tipoUsuario,
-          email: usuario.email,
-          nomeCompleto: usuario.nomeCompleto,
-        });
+      return res.status(200).send({
+        message: 'Usuario logado com sucesso!',
+        token: token,
+        id: usuario.id,
+        tipoUsuario: usuario.tipoUsuario,
+        email: usuario.email,
+        nomeCompleto: usuario.nomeCompleto,
+      });
     } catch (error) {
       return res.status(500).json(error.message);
     }
@@ -79,18 +77,18 @@ class UsuarioController {
       const camposEmFalta = [];
       // Objeto com mensagens de erro personalizadas
       const mensagensErro = {
-        cep: "O campo CEP é obrigatório.",
-        logradouro: "O campo Logradouro é obrigatório.",
-        numero: "O campo Número é obrigatório.",
-        bairro: "O campo Bairro é obrigatório.",
-        cidade: "O campo Cidade é obrigatório.",
-        estado: "O campo Estado é obrigatório.",
-        nomeCompleto: "O campo Nome Completo é obrigatório.",
-        cpf: "O campo CPF é obrigatório.",
-        dataNascimento: "O campo Data de Nascimento é obrigatório.",
-        telefone: "O campo Telefone é obrigatório.",
-        email: "O campo Email é obrigatório.",
-        senha: "O campo Senha é obrigatório.",
+        cep: 'O campo CEP é obrigatório.',
+        logradouro: 'O campo Logradouro é obrigatório.',
+        numero: 'O campo Número é obrigatório.',
+        bairro: 'O campo Bairro é obrigatório.',
+        cidade: 'O campo Cidade é obrigatório.',
+        estado: 'O campo Estado é obrigatório.',
+        nomeCompleto: 'O campo Nome Completo é obrigatório.',
+        cpf: 'O campo CPF é obrigatório.',
+        dataNascimento: 'O campo Data de Nascimento é obrigatório.',
+        telefone: 'O campo Telefone é obrigatório.',
+        email: 'O campo Email é obrigatório.',
+        senha: 'O campo Senha é obrigatório.',
       };
 
       // Verifica os campos obrigatórios
@@ -102,52 +100,50 @@ class UsuarioController {
 
       // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
-        return res.status(422).json({ message: camposEmFalta.join("\n") });
+        return res.status(422).json({ message: camposEmFalta.join('\n') });
       }
       // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
-        return res.status(409).json({ message: "Email já cadastrado." });
+        return res.status(409).json({ message: 'Email já cadastrado.' });
       }
 
       // Verifica se o cpf já está cadastrado
       const cpfExiste = await Usuarios.findOne({ where: { cpf: cpf } });
       if (cpfExiste) {
-        return res.status(409).json({ message: "CPF já cadastrado." });
+        return res.status(409).json({ message: 'CPF já cadastrado.' });
       }
 
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         // Verifica o formato do email
-        return res
-          .status(400)
-          .json("O campo email está em um formato inválido.");
+        return res.status(400).json('O Email não é válido.');
       }
       // Verifica o formato do telefone
       if (!/^\d{8,10}$/.test(telefone)) {
-        return res
-          .status(400)
-          .json({ message: "O campo telefone está em um formato inválido." });
+        return res.status(400).json({
+          message: 'O campo telefone deve incluir DDD e o número de telefone.',
+        });
       }
 
       // Verifica se há apenas números no telefone
       if (!/^[0-9]+$/.test(telefone)) {
         return res
           .status(400)
-          .json({ message: "O campo telefone deve conter apenas números." });
+          .json({ message: 'O campo telefone deve conter apenas números.' });
       }
 
       // Verifica o formato do CPF
       if (!/^\d{11}$/.test(cpf)) {
         return res
           .status(400)
-          .json({ message: "O campo CPF está em um formato inválido." });
+          .json({ message: 'O CPF deve conter 11 número.' });
       }
 
       // Verifica se há apenas números no CPF
       if (!/^[0-9]+$/.test(cpf)) {
         return res
           .status(400)
-          .json({ message: "O campo CPF deve conter apenas números." });
+          .json({ message: 'O campo CPF deve conter apenas números.' });
       }
 
       if (
@@ -159,7 +155,7 @@ class UsuarioController {
       ) {
         return res
           .status(400)
-          .json({ message: "O campo senha está em um formato inválido." });
+          .json({ message: 'O campo senha está em um formato inválido.' });
       }
 
       //verifica se já existe um cep com o numero cadastrado, se o cep existir, usa ele, se não,cria um endereço
@@ -193,7 +189,7 @@ class UsuarioController {
         telefone,
         email,
         senha: hashedSenha,
-        tipoUsuario: "Comprador",
+        tipoUsuario: 'Comprador',
       });
 
       await UsuariosEnderecos.create({
@@ -202,7 +198,7 @@ class UsuarioController {
       });
 
       return res.status(201).send({
-        message: "Usuario cadastrado com sucesso!",
+        message: 'Usuario cadastrado com sucesso!',
         usuario: usuario,
         endereco: endereco,
       });
@@ -238,18 +234,18 @@ class UsuarioController {
       const camposEmFalta = [];
       // Objeto com mensagens de erro personalizadas
       const mensagensErro = {
-        cep: "O campo CEP é obrigatório.",
-        logradouro: "O campo Logradouro é obrigatório.",
-        numero: "O campo Número é obrigatório.",
-        bairro: "O campo Bairro é obrigatório.",
-        cidade: "O campo Cidade é obrigatório.",
-        estado: "O campo Estado é obrigatório.",
-        nomeCompleto: "O campo Nome Completo é obrigatório.",
-        cpf: "O campo CPF é obrigatório.",
-        dataNascimento: "O campo Data de Nascimento é obrigatório.",
-        telefone: "O campo Telefone é obrigatório.",
-        email: "O campo Email é obrigatório.",
-        senha: "O campo Senha é obrigatório.",
+        cep: 'O campo CEP é obrigatório.',
+        logradouro: 'O campo Logradouro é obrigatório.',
+        numero: 'O campo Número é obrigatório.',
+        bairro: 'O campo Bairro é obrigatório.',
+        cidade: 'O campo Cidade é obrigatório.',
+        estado: 'O campo Estado é obrigatório.',
+        nomeCompleto: 'O campo Nome Completo é obrigatório.',
+        cpf: 'O campo CPF é obrigatório.',
+        dataNascimento: 'O campo Data de Nascimento é obrigatório.',
+        telefone: 'O campo Telefone é obrigatório.',
+        email: 'O campo Email é obrigatório.',
+        senha: 'O campo Senha é obrigatório.',
       };
 
       // Verifica os campos obrigatórios
@@ -261,53 +257,51 @@ class UsuarioController {
 
       // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
-        return res.status(422).json({ message: camposEmFalta.join("\n") });
+        return res.status(422).json({ message: camposEmFalta.join('\n') });
       }
 
       // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
-        return res.status(409).json({ message: "Email já cadastrado." });
+        return res.status(409).json({ message: 'Email já cadastrado.' });
       }
 
       // Verifica se o cpf já está cadastrado
       const cpfExiste = await Usuarios.findOne({ where: { cpf: cpf } });
       if (cpfExiste) {
-        return res.status(409).json({ message: "CPF já cadastrado." });
+        return res.status(409).json({ message: 'CPF já cadastrado.' });
       }
 
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         // Verifica o formato do email
-        return res
-          .status(400)
-          .json({ message: "O campo email está em um formato inválido." });
+        return res.status(400).json({ message: 'O Email não é válido.' });
       }
       // Verifica o formato do telefone
-      if (!/^\d{8,10}$/.test(telefone)) {
-        return res
-          .status(400)
-          .json({ message: "O campo telefone está em um formato inválido." });
+      if (!/^\d{8,11}$/.test(telefone)) {
+        return res.status(400).json({
+          message: 'O campo telefone deve incluir DDD e o número de telefone.',
+        });
       }
 
       // Verifica se há apenas números no telefone
       if (!/^[0-9]+$/.test(telefone)) {
         return res
           .status(400)
-          .json({ message: "O campo telefone deve conter apenas números." });
+          .json({ message: 'O campo telefone deve conter apenas números.' });
       }
 
       // Verifica o formato do CPF
       if (!/^\d{11}$/.test(cpf)) {
         return res
           .status(400)
-          .json({ message: "O campo CPF está em um formato inválido." });
+          .json({ message: 'O CPF deve conter 11 número.' });
       }
 
       // Verifica se há apenas números no CPF
       if (!/^[0-9]+$/.test(cpf)) {
         return res
           .status(400)
-          .json({ message: "O campo CPF deve conter apenas números." });
+          .json({ message: 'O campo CPF deve conter apenas números.' });
       }
 
       if (
@@ -317,9 +311,10 @@ class UsuarioController {
         !/\d/.test(senha) || // Pelo menos um número
         !/[@#$%^&+=!*-]/.test(senha) // Pelo menos um caracter especial
       ) {
-        return res
-          .status(400)
-          .json({ message: "O campo senha está em um formato inválido." });
+        return res.status(400).json({
+          message:
+            'A senha deve ter 8 digitos, incluindo números, letra maiúscula, letra minúscula e caracteres especiais.',
+        });
       }
 
       //verifica se já existe um cep com o numero cadastrado, se o cep existir, usa ele, se não,cria um endereço
@@ -341,6 +336,11 @@ class UsuarioController {
         });
       }
 
+      if (tipoUsuario !== 'Administrador' && tipoUsuario !== 'Comprador') {
+        return res
+          .status(400)
+          .json({ message: 'O tipo de usuário não é válido.' });
+      }
       //criptografa a senha
       const hashedSenha = await bcrypt.hash(senha, 10);
 
@@ -354,7 +354,7 @@ class UsuarioController {
         email,
         senha: hashedSenha,
         criadoPor,
-        tipoUsuario: "Administrador",
+        tipoUsuario: tipoUsuario,
       });
 
       //Criação de registro na tabela de associação
@@ -364,7 +364,7 @@ class UsuarioController {
       });
 
       return res.status(201).send({
-        message: "Usuario salvo com sucesso!",
+        message: 'Usuario salvo com sucesso!',
         usuario: usuario,
         endereco: endereco,
       });
@@ -388,7 +388,7 @@ class UsuarioController {
         longitude,
       } = req.body;
 
-      console.log(usuario, "usuarioId");
+      console.log(usuario, 'usuarioId');
 
       const enderecoExistente = await Enderecos.findOne({
         where: { cep, numero },
@@ -404,7 +404,7 @@ class UsuarioController {
         if (associacaoExistente) {
           return res
             .status(409)
-            .json({ message: "Endereço já cadastrado para este usuário." });
+            .json({ message: 'Endereço já cadastrado para este usuário.' });
         }
       }
 
@@ -426,12 +426,12 @@ class UsuarioController {
         enderecoId: novoEndereco.id,
       });
 
-      console.log(enderecosUsuario, "enderecosUsuario");
+      console.log(enderecosUsuario, 'enderecosUsuario');
       return res.status(200).json(enderecosUsuario);
     } catch (error) {
       return res
         .status(500)
-        .json({ message: "Erro interno do servidor", cause: error.message });
+        .json({ message: 'Erro interno do servidor', cause: error.message });
     }
   }
 
@@ -442,7 +442,7 @@ class UsuarioController {
 
       const opcoesConsulta = {
         where: {
-          tipoUsuario: "Comprador",
+          tipoUsuario: 'Comprador',
         },
         limit: Math.min(20, parseInt(limite)),
         offset: parseInt(offset),
@@ -455,22 +455,22 @@ class UsuarioController {
           [Op.between]: [`${createdAt} 00:00:00`, `${createdAt} 23:59:59`],
         };
       }
-      if (ordem === "desc") {
-        opcoesConsulta.order = [["createdAt", "DESC"]];
+      if (ordem === 'desc') {
+        opcoesConsulta.order = [['createdAt', 'DESC']];
       } else {
-        opcoesConsulta.order = [["createdAt", "ASC"]];
+        opcoesConsulta.order = [['createdAt', 'ASC']];
       }
       const registros = await Usuarios.findAll(opcoesConsulta);
       if (!registros || registros.length === 0) {
         return res
           .status(204)
-          .json({ message: "Nenhum resultado encontrado." });
+          .json({ message: 'Nenhum resultado encontrado.' });
       }
       res.status(200).json({ contar: registros.length, resultados: registros });
     } catch (error) {
       res
         .status(500)
-        .json({ message: "Erro interno no servidor.", cause: error.message });
+        .json({ message: 'Erro interno no servidor.', cause: error.message });
     }
   }
 
@@ -479,14 +479,14 @@ class UsuarioController {
       const { usuario_id } = req.params;
 
       if (isNaN(usuario_id)) {
-        return res.status(400).json({ message: "ID de usuário inválido." });
+        return res.status(400).json({ message: 'ID de usuário inválido.' });
       }
 
       // Consultar o usuário por ID no banco de dados
       const usuario = await Usuarios.findByPk(usuario_id);
 
       if (!usuario) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
+        return res.status(404).json({ message: 'Usuário não encontrado.' });
       }
 
       // Retorna os detalhes do usuário como um objeto JSON
@@ -494,7 +494,7 @@ class UsuarioController {
     } catch (error) {
       return res
         .status(500)
-        .json({ message: "Erro interno no servidor.", cause: error.message });
+        .json({ message: 'Erro interno no servidor.', cause: error.message });
     }
   }
 
@@ -504,21 +504,21 @@ class UsuarioController {
       const { nomeCompleto, email, cpf, telefone, tipoUsuario } = req.body;
 
       if (!req.body) {
-        return res.status(400).json({ message: "Corpo da requisição vazio." });
+        return res.status(400).json({ message: 'Corpo da requisição vazio.' });
       }
 
       const usuario = await Usuarios.findByPk(usuario_id);
 
       if (!usuario) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
+        return res.status(404).json({ message: 'Usuário não encontrado.' });
       }
 
       const camposPermitidos = [
-        "nomeCompleto",
-        "email",
-        "cpf",
-        "telefone",
-        "tipoUsuario",
+        'nomeCompleto',
+        'email',
+        'cpf',
+        'telefone',
+        'tipoUsuario',
       ];
 
       const camposDesconhecidos = Object.keys(req.body).filter(
@@ -526,7 +526,7 @@ class UsuarioController {
       );
       if (camposDesconhecidos.length > 0) {
         return res.status(422).json({
-          message: `Campo desconhecidos: ${camposDesconhecidos.join(", ")}`,
+          message: `Campo desconhecidos: ${camposDesconhecidos.join(', ')}`,
         });
       }
 
@@ -537,7 +537,7 @@ class UsuarioController {
         } catch (error) {
           return res
             .status(422)
-            .json({ message: "O campo Nome não pode ser vazio." });
+            .json({ message: 'O campo Nome não pode ser vazio.' });
         }
         usuario.nomeCompleto = nomeCompleto;
       }
@@ -546,7 +546,7 @@ class UsuarioController {
         try {
           !validarCPF(cpf);
         } catch (error) {
-          return res.status(422).json({ message: "CPF inválido." });
+          return res.status(422).json({ message: 'CPF inválido.' });
         }
         usuario.cpf = cpf;
       }
@@ -555,7 +555,7 @@ class UsuarioController {
         try {
           validarEmail(email);
         } catch (error) {
-          return res.status(422).json({ message: "E-mail inválido." });
+          return res.status(422).json({ message: 'E-mail inválido.' });
         }
         usuario.email = email;
       }
@@ -567,7 +567,7 @@ class UsuarioController {
         } catch (error) {
           return res.status(422).json({
             message:
-              "O campo telefone não pode ser negativo e não pode ter caracteres.",
+              'O campo telefone não pode ser negativo e não pode ter caracteres.',
           });
         }
       }
@@ -577,16 +577,16 @@ class UsuarioController {
         try {
           validarTipoUsuario(tipoUsuario);
         } catch (error) {
-          return res.status(422).json({ message: "Tipo de usuário inválido." });
+          return res.status(422).json({ message: 'Tipo de usuário inválido.' });
         }
 
         //não deve permitir trocar 'Administrador' para 'Comprador'
-        if (tipoUsuario === "Administrador") {
+        if (tipoUsuario === 'Administrador') {
           usuario.tipoUsuario = tipoUsuario;
         } else {
           return res.status(422).json({
             message:
-              "Não é permitido alterar o tipo Administrador para Comprador.",
+              'Não é permitido alterar o tipo Administrador para Comprador.',
           });
         }
       }
@@ -596,7 +596,7 @@ class UsuarioController {
     } catch (error) {
       return res
         .status(500)
-        .json({ message: "Erro no servidor.", cause: error.message });
+        .json({ message: 'Erro no servidor.', cause: error.message });
     }
   }
 
@@ -606,7 +606,7 @@ class UsuarioController {
       // Consulta os endereços cadastrados do usuário com base no usuárioId
       const enderecoIds = await UsuariosEnderecos.findAll({
         where: { usuarioId },
-        attributes: ["enderecoId"], // Obtém apenas os IDs dos endereços
+        attributes: ['enderecoId'], // Obtém apenas os IDs dos endereços
       });
 
       if (enderecoIds.length === 0) {
@@ -625,7 +625,7 @@ class UsuarioController {
     } catch (error) {
       console.error(error.message);
       return res.status(400).send({
-        message: "Erro ao listar os endereços!",
+        message: 'Erro ao listar os endereços!',
         error: error.message,
       });
     }
@@ -637,7 +637,7 @@ class UsuarioController {
 
       if (novaSenha !== confirmarSenha) {
         return res.status(400).json({
-          error: "A nova senha e a confirmação da senha não coincidem.",
+          error: 'A nova senha e a confirmação da senha não coincidem.',
         });
       }
 
@@ -647,7 +647,7 @@ class UsuarioController {
       });
 
       if (!usuario) {
-        return res.status(404).json({ error: "Usuário não encontrado." });
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
 
       // Gere uma nova senha criptografada
@@ -663,7 +663,7 @@ class UsuarioController {
         }
       );
 
-      return res.status(200).json({ message: "Senha atualizada com sucesso." });
+      return res.status(200).json({ message: 'Senha atualizada com sucesso.' });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
