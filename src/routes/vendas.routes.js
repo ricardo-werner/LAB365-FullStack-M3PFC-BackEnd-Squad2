@@ -18,7 +18,7 @@ class VendaRouter {
     vendasRoutes.get('/vendas/listar', listarVendas);
     vendasRoutes.get('/venda/listarId/:id', listarVendaId);
     vendasRoutes.patch('/vendas/atualizarId/:id', atualizarVendaId);
-    vendasRoutes.get('/vendas/admin/dashboard', auth, vendasAdminDashboard
+    vendasRoutes.get('/vendas/admin/dashboard', auth, checarAdmin, vendasAdminDashboard
     );
     //vendasRoutes.delete('/venda/deletarId/:id', auth, deletarVendaId)
     //vendasRoutes.patch('/venda/restaurarId/:id', auth, restaurarVendaId)
