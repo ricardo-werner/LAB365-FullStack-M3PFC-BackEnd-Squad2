@@ -105,7 +105,11 @@ class UsuarioController {
       // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
-        return res.status(409).json({ message: 'Email já cadastrado.' });
+        return res
+          .status(409)
+          .json({
+            message: "E-mail já cadastrado, tente contato com o suporte. ",
+          });
       }
 
       // Verifica se o cpf já está cadastrado
