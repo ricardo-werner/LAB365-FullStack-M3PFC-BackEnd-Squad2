@@ -460,13 +460,19 @@ class UsuarioController {
       } else {
         opcoesConsulta.order = [['createdAt', 'ASC']];
       }
+
+      const totalRegistros = await Usuarios.count({
+        where: opcoesConsulta.where, // Aplicar os mesmos filtros de consulta
+      });
+
       const registros = await Usuarios.findAll(opcoesConsulta);
       if (!registros || registros.length === 0) {
         return res
           .status(204)
           .json({ message: 'Nenhum resultado encontrado.' });
       }
-      res.status(200).json({ contar: registros.length, resultados: registros });
+      console.log(registros.length);
+      res.status(200).json({ contar: totalRegistros, resultados: registros });
     } catch (error) {
       res
         .status(500)
@@ -566,8 +572,7 @@ class UsuarioController {
           usuario.telefone = telefone;
         } catch (error) {
           return res.status(422).json({
-            message:
-              'O campo telefone não pode ser negativo e não pode ter caracteres.',
+            message: 'Informe um telefone válido.',
           });
         }
       }
