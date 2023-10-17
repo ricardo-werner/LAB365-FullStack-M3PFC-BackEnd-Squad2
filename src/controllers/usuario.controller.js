@@ -277,7 +277,7 @@ class UsuarioController {
         return res.status(400).json({ message: 'O Email não é válido.' });
       }
       // Verifica o formato do telefone
-      if (!/^\d{8,11}$/.test(telefone)) {
+      if (!/^\d{10,11}$/.test(telefone)) {
         return res.status(400).json({
           message: 'O campo telefone deve incluir DDD e o número de telefone.',
         });
@@ -420,15 +420,13 @@ class UsuarioController {
         longitude,
       });
 
-
-
-      const enderecosUsuario= await UsuariosEnderecos.create({
+      const enderecosUsuario = await UsuariosEnderecos.create({
         usuarioId: usuario.id,
         enderecoId: novoEndereco.id,
       });
-      
+
       console.log(enderecosUsuario, 'enderecosUsuario');
-      
+
       return res.status(200).json(enderecosUsuario);
     } catch (error) {
       return res
@@ -437,22 +435,22 @@ class UsuarioController {
     }
   }
 
-  async listarComprador(req, res) {
+  async listarUsuarios(req, res) {
     try {
       const { offset, limite } = req.params;
       const { nomeCompleto, createdAt, ordem } = req.query;
 
       const opcoesConsulta = {
-        where: {
-          tipoUsuario: 'Comprador',
-        },
         limit: Math.min(20, parseInt(limite)),
         offset: parseInt(offset),
       };
       if (nomeCompleto) {
-        opcoesConsulta.where.nomeCompleto = { [Op.iLike]: `%${nomeCompleto}%` };
+        opcoesConsulta.where = {
+          nomeCompleto: { [Op.iLike]: `%${nomeCompleto}%` },
+        };
       }
       if (createdAt) {
+        if (!opcoesConsulta.where) opcoesConsulta.where = {};
         opcoesConsulta.where.createdAt = {
           [Op.between]: [`${createdAt} 00:00:00`, `${createdAt} 23:59:59`],
         };

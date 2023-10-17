@@ -8,7 +8,7 @@ const {
   listarEnderecosComprador,
   atualizarCompradorPorId,
   recuperarSenha,
-  listarComprador,
+  listarUsuarios,
 } = require('../controllers/usuario.controller');
 const { auth } = require('../middleware/auth');
 const { checarAdmin } = require('../middleware/checarAdmin');
@@ -43,7 +43,7 @@ class UsuarioRouter {
       '/comprador/admin/:offset/:limite',
       auth,
       checarAdmin,
-      listarComprador
+      listarUsuarios
     );
     usuarioRoutes.post('/usuario/nova-senha', auth, recuperarSenha);
 
