@@ -105,7 +105,11 @@ class UsuarioController {
       // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
-        return res.status(409).json({ message: 'Email já cadastrado.' });
+        return res
+          .status(409)
+          .json({
+            message: "E-mail já cadastrado, tente contato com o suporte. ",
+          });
       }
 
       // Verifica se o cpf já está cadastrado
@@ -277,7 +281,7 @@ class UsuarioController {
         return res.status(400).json({ message: 'O Email não é válido.' });
       }
       // Verifica o formato do telefone
-      if (!/^\d{8,11}$/.test(telefone)) {
+      if (!/^\d{10,11}$/.test(telefone)) {
         return res.status(400).json({
           message: 'O campo telefone deve incluir DDD e o número de telefone.',
         });
@@ -420,15 +424,13 @@ class UsuarioController {
         longitude,
       });
 
-
-
-      const enderecosUsuario= await UsuariosEnderecos.create({
+      const enderecosUsuario = await UsuariosEnderecos.create({
         usuarioId: usuario.id,
         enderecoId: novoEndereco.id,
       });
-      
+
       console.log(enderecosUsuario, 'enderecosUsuario');
-      
+
       return res.status(200).json(enderecosUsuario);
     } catch (error) {
       return res
@@ -437,22 +439,22 @@ class UsuarioController {
     }
   }
 
-  async listarComprador(req, res) {
+  async listarUsuarios(req, res) {
     try {
       const { offset, limite } = req.params;
       const { nomeCompleto, createdAt, ordem } = req.query;
 
       const opcoesConsulta = {
-        where: {
-          tipoUsuario: 'Comprador',
-        },
         limit: Math.min(20, parseInt(limite)),
         offset: parseInt(offset),
       };
       if (nomeCompleto) {
-        opcoesConsulta.where.nomeCompleto = { [Op.iLike]: `%${nomeCompleto}%` };
+        opcoesConsulta.where = {
+          nomeCompleto: { [Op.iLike]: `%${nomeCompleto}%` },
+        };
       }
       if (createdAt) {
+        if (!opcoesConsulta.where) opcoesConsulta.where = {};
         opcoesConsulta.where.createdAt = {
           [Op.between]: [`${createdAt} 00:00:00`, `${createdAt} 23:59:59`],
         };
@@ -462,13 +464,19 @@ class UsuarioController {
       } else {
         opcoesConsulta.order = [['createdAt', 'ASC']];
       }
+
+      const totalRegistros = await Usuarios.count({
+        where: opcoesConsulta.where, // Aplicar os mesmos filtros de consulta
+      });
+
       const registros = await Usuarios.findAll(opcoesConsulta);
       if (!registros || registros.length === 0) {
         return res
           .status(204)
           .json({ message: 'Nenhum resultado encontrado.' });
       }
-      res.status(200).json({ contar: registros.length, resultados: registros });
+      console.log(registros.length);
+      res.status(200).json({ contar: totalRegistros, resultados: registros });
     } catch (error) {
       res
         .status(500)
@@ -568,8 +576,7 @@ class UsuarioController {
           usuario.telefone = telefone;
         } catch (error) {
           return res.status(422).json({
-            message:
-              'O campo telefone não pode ser negativo e não pode ter caracteres.',
+            message: 'Informe um telefone válido.',
           });
         }
       }

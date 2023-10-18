@@ -21,8 +21,14 @@ function validarEmail(email) {
 }
 
 function validarTelefone(telefone) {
-  if (telefone < 0 || !/^[0-9]+$/.test(telefone)) {
-    throw new validarErros('O campo telefone deve conter apenas números e não pode ser negativo.');
+  const telefoneNumerico = telefone.replace(/\D/g, '');
+
+  if (!/^[0-9]+$/.test(telefoneNumerico)) {
+    throw new Error('O campo telefone deve conter apenas números.');
+  }
+
+  if (telefoneNumerico.length < 10 || telefoneNumerico.length > 11) {
+    throw new Error('O telefone deve conter de 10 a 11 dígitos.');
   }
 }
 
