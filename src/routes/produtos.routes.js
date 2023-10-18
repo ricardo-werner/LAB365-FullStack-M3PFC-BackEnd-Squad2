@@ -15,7 +15,7 @@ class ProdutosRoutes {
     const produtosRoutes = Router();
     produtosRoutes.post('/produtos/admin', auth, checarAdmin, cadastrarProduto);
     produtosRoutes.get(
-      '/produtos/admin',
+      '/produtos/admin/:offset/:limit',
       auth,
       checarAdmin,
       listarProdutosAdmin
@@ -23,7 +23,6 @@ class ProdutosRoutes {
     produtosRoutes.get(
       '/produto/:offset/:limit',
       auth,
-      checarAdmin,
       filtrarProdutos
     );
     produtosRoutes.get('/produto/:produtoId', detalharProduto);

@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Produtos } = require('../models/produtos');
 const { config } = require('dotenv');
 config();
@@ -30,7 +31,7 @@ class ProdutosController {
 
       const tiposPermitidos = ['Controlado', 'Não Controlado'];
       if (!tiposPermitidos.includes(tipoProduto)) {
-        return response.status(400).json({
+        return res.status(400).json({
           message:
             "O Tipo de Produto deve ser 'Controlado' ou 'Não Controlado'",
         });
@@ -101,67 +102,72 @@ class ProdutosController {
 
   async listarProdutosAdmin(req, res) {
     try {
-      // Obter os parâmetros de consulta da URL
-      const { offset, limit, name, typeProduct, order } = req.query;
-      const adminId = req.usuario.id; // Obter o ID do usuário ADMIN do token JWT
-  
-      // Verificar se o usuário é um ADMIN com base no ID
-      if (adminId !== null) {
-        // Construir as opções para a consulta
-        const options = {
-          where: {
-            usuarioId: adminId, // Filtre com base no ID do usuário ADMIN
-          },
-          order: [['totalEstoque', order === 'asc' ? 'ASC' : 'DESC']], // Configurar a ordenação com base no parâmetro 'order'
-        };
-  
-        // Aplicar os filtros, se fornecidos
-        if (name) {
-          options.where.nomeProduto = name;
-        }
-        if (typeProduct) {
-          options.where.tipoProduto = typeProduct;
-        }
-  
-        // Aplicar a paginação
-        if (offset && limit) {
-          options.offset = parseInt(offset, 10);
-          options.limit = Math.min(parseInt(limit, 10), 20);
-        }
-  
-        // Realizar a consulta com as opções configuradas
-        const produtos = await Produtos.findAndCountAll(options);
-  
-        if (produtos.count === 0) {
-          return res.status(204).json({});
-        }
-  
-        return res.status(200).json({
-          produtos: produtos.rows,
-          total: produtos.count,
-        });
-      } else {
-        return res.status(403).json({ message: 'Acesso negado. Acesso somente para Administradores.' });
+      const { offset, limit } = req.params;
+      const { nomeProduto, tipoProduto, ordem } = req.query;
+
+      const options = {
+        where: { usuarioId: req.usuario.id }, // Filtre com base no ID do usuário ADMIN
+        order: [['totalEstoque', ordem === 'asc' ? 'ASC' : 'DESC']], // Configurar a ordenação com base no parâmetro 'order'
+      };
+
+      const filtrar = {};
+      // Aplicar os filtros, se fornecidos
+      if (nomeProduto) {
+        filtrar.nomeProduto = { [Op.iLike]: `%${nomeProduto}%` };
       }
+      if (tipoProduto) {
+        filtrar.tipoProduto = tipoProduto;
+
+        // Adicione a cláusula usuarioId quando tipoProduto estiver presente
+        filtrar.usuarioId = req.usuario.id;
+      }
+
+      options.where = filtrar;
+
+      // Aplicar a paginação
+      if (offset && limit) {
+        options.offset = Math.max(parseInt(offset, 10), 0); // Garante que seja um número positivo
+        options.limit = Math.min(parseInt(limit, 10), 20); // Limita a um máximo de 20 itens
+      }
+
+      // Realizar a consulta com as opções configuradas
+      const produtos = await Produtos.findAndCountAll(options);
+
+      if (produtos.count === 0) {
+        return res.status(204).json({});
+      }
+
+      return res.status(200).json({
+        produtos: produtos.rows,
+        total: produtos.count,
+      });
     } catch (error) {
-      console.error(error.message);
-      return res.status(400).json({
+      return res.status(500).json({
         message: 'Erro ao listar os produtos',
         error: error.message,
       });
     }
   }
-  
 
-  async filtrarProdutos(request, response) {
+  async filtrarProdutos(req, res) {
     try {
-      const { offset, limit } = request.params;
-      const { nomeProduto, tipoProduto, ordem } = request.query;
+      const { offset, limit } = req.params;
+      const { nomeProduto, tipoProduto, ordem } = req.query;
 
-      if (limit > 20) {
-        return response.status(400).json({
-          message: 'O limite deve ser menor ou igual à 20',
-        });
+      const consultar = {
+        limit: Math.min(20, parseInt(limit)),
+        offset: parseInt(offset),
+      };
+      if (nomeProduto) {
+        consultar.where = {
+          nomeProduto: { [Op.iLike]: `%${nomeProduto}%` },
+        };
+      } else {
+        if (tipoProduto) {
+          consultar.where = {
+            tipoProduto: tipoProduto,
+          };
+        }
       }
 
       const whereClause = {};
@@ -174,43 +180,29 @@ class ProdutosController {
         whereClause.tipoProduto = tipoProduto;
       }
 
-      const ordenar = [];
-
       if (ordem === 'asc') {
-        ordenar.push(['totalEstoque', 'ASC']);
-      } else if (ordem === 'desc') {
-        ordenar.push(['totalEstoque', 'DESC']);
+        consultar.order = [['totalEstoque', 'ASC']];
+      } else {
+        consultar.order = [['totalEstoque', 'DESC']];
       }
 
-      // Verifique o ID do usuário administrador com base no token JWT
-      const usuario = request.usuario;
-      console.log(usuario, 'aaaaa');
-      if (!usuario || usuario.tipoUsuario !== 'Administrador') {
-        return response.status(403).json({
-          message: 'Acesso negado para este tipo de usuário.',
-        });
+      const totalProdutosRegistrados = await Produtos.count();
+
+      const produtos = await Produtos.findAll(consultar);
+      if (!produtos || produtos.length === 0) {
+        return res
+          .status(204)
+          .json({ message: 'Nenhum resultado encontrado.' });
       }
 
-      // Agora você pode adicionar o ID do usuário ao whereClause
-      whereClause.usuarioId = usuario.id;
-      const produtos = await Produtos.findAll({
-        where: whereClause,
-        offset: offset,
-        limit: limit,
-        order: ordenar,
-      });
-
-      if (produtos.length == 0) {
-        return response.status(204).send({});
-      }
-
-      return response.status(200).send({
-        produtos,
-        'Total de produtos filtrados': produtos.length,
+      return res.status(200).json({
+        message: 'Total de produtos filtrados:',
+        contar: totalProdutosRegistrados,
+        resultado: produtos,
       });
     } catch (error) {
       console.error(error.message);
-      return response.status(400).send({
+      return res.status(400).send({
         message: 'Erro ao listar o produto!',
         error: error.message,
       });
