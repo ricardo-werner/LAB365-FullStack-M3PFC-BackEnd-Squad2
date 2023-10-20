@@ -1,7 +1,7 @@
 const {
   criarVenda,
   listarVendas,
-  listarVendaId,
+  listarVendaAdmin,
   atualizarVendaId,
   vendasAdminDashboard,
   //deleteOneVenda,
@@ -15,10 +15,24 @@ class VendaRouter {
   routesFromVendas() {
     const vendasRoutes = Router();
     vendasRoutes.post('/venda/criar', auth, criarVenda);
-    vendasRoutes.get('/vendas/listar', listarVendas);
-    vendasRoutes.get('/venda/listarId/:id', listarVendaId);
-    vendasRoutes.patch('/vendas/atualizarId/:id', atualizarVendaId);
-    vendasRoutes.get('/vendas/admin/dashboard', auth, checarAdmin, vendasAdminDashboard
+    vendasRoutes.get('/vendas/lista', auth, listarVendas);
+    vendasRoutes.get(
+      '/admin/vendas/lista',
+      auth,
+      checarAdmin,
+      listarVendaAdmin
+    );
+    vendasRoutes.patch(
+      'admin/vendas/atualizar/:id',
+      auth,
+      checarAdmin,
+      atualizarVendaId
+    );
+    vendasRoutes.get(
+      '/admin/dashboard',
+      auth,
+      checarAdmin,
+      vendasAdminDashboard
     );
     //vendasRoutes.delete('/venda/deletarId/:id', auth, deletarVendaId)
     //vendasRoutes.patch('/venda/restaurarId/:id', auth, restaurarVendaId)
