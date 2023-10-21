@@ -107,26 +107,44 @@ class VendasController {
 
   async listarVendas(req, res) {
     try {
-      const vendas = await Vendas.findAll();
+      const usuarioId = req.usuario.id;
 
-      return res.status(200).send(vendas);
+      const compras = await Vendas.findAll({
+        where: { compradorId: usuarioId },
+      });
+
+      if (!compras || compras.length === 0) {
+        return res
+          .status(404)
+          .json({ message: 'Nenhuma compra encontrada para este comprador.' });
+      }
+
+      return res.status(200).send(compras);
     } catch (error) {
       const status = error.message.status || 400;
       const message = error.message.msg || error.message;
       return res.status(parseInt(status)).send({
-        message: 'Falha na operação de listar as vendas',
+        message: 'Falha na operação de listar as compras',
         cause: message,
       });
     }
   }
 
-  async listarVendaId(req, res) {
+  async listarVendaAdmin(req, res) {
     try {
-      const { id } = req.params;
+      const usuarioId = req.usuario.id;
 
-      const venda = await Vendas.findByPk(id);
+      const vendas = await Vendas.findAll({ where: { vendedorId: usuarioId } });
 
-      return res.status(200).send(venda);
+      if (!vendas || vendas.length === 0) {
+        return res
+          .status(404)
+          .json({
+            message: 'Nenhuma venda encontrada para este administrador.',
+          });
+      }
+
+      return res.status(200).send(vendas);
     } catch (error) {
       const status = error.message.status || 400;
       const message = error.message.msg || error.message;
@@ -209,7 +227,7 @@ class VendasController {
       return res.status(200).json(resultado);
     } catch (error) {
       console.error(error.message);
-      return res.status( ).json({
+      return res.status().json({
         message: 'Erro interno do servidor',
         cause: error.message,
       });
