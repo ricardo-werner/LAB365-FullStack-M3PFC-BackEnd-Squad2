@@ -26,7 +26,12 @@ class ProdutosRoutes {
       filtrarProdutos
     );
     produtosRoutes.get('/produto/:produtoId', detalharProduto);
-    produtosRoutes.patch('/produto/admin/:produtoId', atualizarProduto);
+    produtosRoutes.patch(
+      "/produto/admin/:produtoId",
+      auth,
+      checarAdmin,
+      atualizarProduto
+    );
     return produtosRoutes;
   }
 }
