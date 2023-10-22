@@ -17,6 +17,13 @@ class ProdutosController {
         totalEstoque,
       } = req.body;
 
+      const existeProdutoLabMesmoUsuario = await Produtos.findOne({ where: { nomeProduto: nomeProduto , nomeLab: nomeLab} });
+      if (existeProdutoLabMesmoUsuario) {
+        return res.status(409).json({
+          error: "Já existe um medicamento com esse Nome e Laboratório cadastrado para esse usuário.",
+        });
+      }
+
       const usuarioAutenticadoId = req.usuario.id;
       // Obter o usuário ID do corpo da solicitação ou usar o ID do usuário autenticado
       const usuarioIdBody = req.body.usuarioId || usuarioAutenticadoId;
