@@ -134,14 +134,15 @@ class VendasController {
     try {
       const usuarioId = req.usuario.id;
 
-      const vendas = await Vendas.findAll({ where: { vendedorId: usuarioId } });
+      const vendas = await Vendas.findAll({
+        where: { vendedorId: usuarioId },
+        include: { model: Produtos },
+      });
 
       if (!vendas || vendas.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message: 'Nenhuma venda encontrada para este administrador.',
-          });
+        return res.status(404).json({
+          message: 'Nenhuma venda encontrada para este administrador.',
+        });
       }
 
       return res.status(200).send(vendas);
