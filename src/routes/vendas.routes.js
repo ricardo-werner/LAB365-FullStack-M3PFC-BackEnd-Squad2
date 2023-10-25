@@ -4,8 +4,6 @@ const {
   listarVendaAdmin,
   atualizarVendaId,
   vendasAdminDashboard,
-  //deleteOneVenda,
-  //restoreOneVenda
 } = require('../controllers/vendas.controller');
 const { Router } = require('express');
 const { auth } = require('../middleware/auth');
