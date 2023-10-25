@@ -13,11 +13,20 @@ class VendasController {
       const compradorId = req.usuario.id;
 
       for (const venda of vendas) {
+        if (
+          !venda.produtoId ||
+          !venda.quantidadeProdutoVendido ||
+          !venda.tipoPagamento
+        ) {
+          return res
+            .status(422)
+            .json({ message: 'Campos obrigatórios não foram fornecidos.' });
+        }
+
         if (!venda.quantidadeProdutoVendido) {
           venda.quantidadeProdutoVendido = 0;
         }
 
-        // Obtenha o ID do vendedor do produto relacionado
         const produto = await Produtos.findOne({
           where: { id: venda.produtoId },
         });
@@ -29,12 +38,22 @@ class VendasController {
         }
 
         const vendedorId = produto.usuarioId;
+
+        if (vendedorId === compradorId) {
+          vendasValidas = false;
+          res.status(400).json({
+            message:
+              'Administradores (vendedores) não podem comprar seus próprios produtos.',
+          });
+          break;
+        }
+
         const total = venda.quantidadeProdutoVendido * produto.precoUnitario;
 
         if (venda.quantidadeProdutoVendido > produto.totalEstoque) {
           vendasValidas = false;
-          res.status(400).json({
-            message: `Não temos a quantidade solicitada para o produto: ${produto.nomeProduto} - ID:${produto.id}, Total disponível:${produto.totalEstoque}`,
+          res.status(409).json({
+            message: `${produto.nomeProduto} quantidade disponível em estoque: ${produto.totalEstoque}`,
             estoqueDisponivel: produto.totalEstoque,
           });
           break;
@@ -67,7 +86,6 @@ class VendasController {
           break;
         }
 
-        // Crie o registro de venda
         await Vendas.create({
           compradorId: compradorId,
           vendedorId: vendedorId,
@@ -79,7 +97,6 @@ class VendasController {
           tipoPagamento: tipoPagamento,
         });
 
-        // Atualize a quantidade de produtos na tabela Produtos
         await Produtos.update(
           {
             totalEstoque: produto.totalEstoque - venda.quantidadeProdutoVendido,
@@ -105,25 +122,26 @@ class VendasController {
     }
   }
 
-  async listarVendas(req, res) {
+  async listarCompras(req, res) {
     try {
       const usuarioId = req.usuario.id;
 
       const compras = await Vendas.findAll({
         where: { compradorId: usuarioId },
+        include: { model: Produtos },
       });
 
       if (!compras || compras.length === 0) {
         return res
           .status(404)
-          .json({ message: 'Nenhuma compra encontrada para este comprador.' });
+          .json({ message: 'Você ainda não tem compras conosco.' });
       }
 
-      return res.status(200).send(compras);
+      return res.status(200).json(compras);
     } catch (error) {
       const status = error.message.status || 400;
       const message = error.message.msg || error.message;
-      return res.status(parseInt(status)).send({
+      return res.status(parseInt(status)).json({
         message: 'Falha na operação de listar as compras',
         cause: message,
       });
@@ -141,15 +159,15 @@ class VendasController {
 
       if (!vendas || vendas.length === 0) {
         return res.status(404).json({
-          message: 'Nenhuma venda encontrada para este administrador.',
+          message: 'Você ainda não tem nenuma venda registrada.',
         });
       }
 
-      return res.status(200).send(vendas);
+      return res.status(200).json(vendas);
     } catch (error) {
       const status = error.message.status || 400;
       const message = error.message.msg || error.message;
-      return res.status(parseInt(status)).send({
+      return res.status(parseInt(status)).json({
         message: 'Falha na operação de listar a venda',
         cause: message,
       });
@@ -183,11 +201,11 @@ class VendasController {
 
       await venda.save();
 
-      return res.status(200).send(venda);
+      return res.status(200).json(venda);
     } catch (error) {
       const status = error.message.status || 400;
       const message = error.message.msg || error.message;
-      return res.status(parseInt(status)).send({
+      return res.status(parseInt(status)).json({
         message: 'Falha na operação de atualizar a venda',
         cause: message,
       });
@@ -234,59 +252,6 @@ class VendasController {
       });
     }
   }
-
-  // //Definir o endpoint para deletar usuário (deleção lógica)
-  // async deletarVendaId(require, res) {
-  //     try {
-  //         const { id } = require.params;
-
-  //         const venda = await Vendas.findByPk(id, { paranoid: true });
-  //         if (!venda) {
-  //             return res.status(404).send({ error: 'Venda não encontrada' });
-  //         }
-
-  //         if (venda.status === 'ativo') {
-  //             venda.status = 'inativo';
-  //             await venda.destroy(); // Realiza o Soft Delete
-  //         }
-
-  //         return res.status(202).send(venda);
-
-  //     } catch (error) {
-  //         const status = error.message.status || 400
-  //         const message = error.message.msg || error.message
-  //         return res.status(parseInt(status)).send({
-  //             message: "Falha na operação de deletar venda",
-  //             cause: message
-  //         });
-  //     }
-  // }
-
-  // //Definir o endpoint para restaurar usuário (retauração lógica)
-  // async restaurarVendaId(require, res) {
-  //     try {
-  //         const { id } = require.params;
-
-  //         const venda = await Vendas.findByPk(id, { paranoid: false });
-  //         if (!venda) {
-  //             return res.status(404).send({ error: 'Venda não encontrada' });
-  //         }
-
-  //         await venda.restore(); // Realiza o Soft Delete
-  //         venda.status = 'ativo';
-  //         await venda.save();
-
-  //         return res.status(201).send(venda);
-
-  //     } catch (error) {
-  //         const status = error.message.status || 400
-  //         const message = error.message.msg || error.message
-  //         return res.status(parseInt(status)).send({
-  //             message: "Falha na operação de restaurar venda",
-  //             cause: message
-  //         });
-  //     }
-  // }
 }
 
 module.exports = new VendasController();

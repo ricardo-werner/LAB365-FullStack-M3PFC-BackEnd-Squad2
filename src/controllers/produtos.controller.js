@@ -17,18 +17,21 @@ class ProdutosController {
         totalEstoque,
       } = req.body;
 
-      const existeProdutoLabMesmoUsuario = await Produtos.findOne({ where: { nomeProduto: nomeProduto , nomeLab: nomeLab} });
+      const existeProdutoLabMesmoUsuario = await Produtos.findOne({
+        where: { nomeProduto: nomeProduto, nomeLab: nomeLab },
+      });
       if (existeProdutoLabMesmoUsuario) {
         return res.status(409).json({
-          error: "Já existe um medicamento com esse Nome e Laboratório cadastrado para esse usuário.",
+          error:
+            'Já existe um medicamento com esse Nome e Laboratório cadastrado para esse usuário.',
         });
       }
 
       const usuarioAutenticadoId = req.usuario.id;
-      // Obter o usuário ID do corpo da solicitação ou usar o ID do usuário autenticado
+
       const usuarioIdBody = req.body.usuarioId || usuarioAutenticadoId;
 
-      // Verifique se o usuarioId do corpo da solicitação é igual ao ID do usuário autenticado
+
       if (usuarioIdBody !== usuarioAutenticadoId) {
         return res.status(403).json({
           message:
@@ -56,11 +59,11 @@ class ProdutosController {
         });
       }
 
-      // Verifica se os campos obrigatórios estão ausentes ou vazios
+
       const camposEmFalta = [];
-      // Objeto com mensagens de erro personalizadas
+   
       const mensagensErro = {
-        // usuarioId: 'O ID de Usuário é obrigatório.',
+      
         nomeProduto: 'O Nome do Produto é obrigatório.',
         nomeLab: 'O Nome do Laboratório é obrigatório.',
         imagemProduto: 'O Link da Imagem é obrigatório.',
@@ -70,20 +73,19 @@ class ProdutosController {
         totalEstoque: 'O Estoque é obrigatório.',
       };
 
-      // Verifica os campos obrigatórios
+  
       for (const campo in mensagensErro) {
         if (!req.body[campo]) {
           camposEmFalta.push(mensagensErro[campo]);
         }
       }
 
-      // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
         return res.status(422).json({ error: camposEmFalta.join('\n') });
       }
 
       const data = await Produtos.create({
-        usuarioId: usuarioIdBody, //registra o id do usuario autenticado
+        usuarioId: usuarioIdBody, 
         nomeProduto,
         nomeLab,
         imagemProduto,
@@ -113,31 +115,30 @@ class ProdutosController {
       const { nomeProduto, tipoProduto, ordem } = req.query;
 
       const options = {
-        where: { usuarioId: req.usuario.id }, // Filtre com base no ID do usuário ADMIN
-        order: [['totalEstoque', ordem === 'asc' ? 'ASC' : 'DESC']], // Configurar a ordenação com base no parâmetro 'order'
+        where: { usuarioId: req.usuario.id },
+        order: [['totalEstoque', ordem === 'asc' ? 'ASC' : 'DESC']], 
       };
 
       const filtrar = {};
-      // Aplicar os filtros, se fornecidos
+    
       if (nomeProduto) {
         filtrar.nomeProduto = { [Op.iLike]: `%${nomeProduto}%` };
       }
       if (tipoProduto) {
         filtrar.tipoProduto = tipoProduto;
 
-        // Adicione a cláusula usuarioId quando tipoProduto estiver presente
+      
         filtrar.usuarioId = req.usuario.id;
       }
 
       options.where = filtrar;
 
-      // Aplicar a paginação
+     
       if (offset && limit) {
-        options.offset = Math.max(parseInt(offset, 10), 0); // Garante que seja um número positivo
-        options.limit = Math.min(parseInt(limit, 10), 20); // Limita a um máximo de 20 itens
+        options.offset = Math.max(parseInt(offset, 10), 0); 
+        options.limit = Math.min(parseInt(limit, 10), 20); 
       }
 
-      // Realizar a consulta com as opções configuradas
       const produtos = await Produtos.findAndCountAll(options);
 
       if (produtos.count === 0) {
@@ -235,7 +236,7 @@ class ProdutosController {
       });
     } catch (error) {
       console.error(error.message);
-      return res.status(400).send({
+      return res.status(500).send({
         message: 'Erro ao listar o produto!',
         error: error.message,
       });
@@ -282,12 +283,15 @@ class ProdutosController {
         });
       }
 
+      const estoqueAtual = produto.totalEstoque || 0;
+      const novoEstoque = estoqueAtual + totalEstoque;
+
       await Produtos.update(
         {
           nomeProduto,
           imagemProduto,
           dosagem,
-          totalEstoque,
+          totalEstoque: novoEstoque,
         },
         {
           where: {

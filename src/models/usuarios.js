@@ -17,7 +17,7 @@ const Usuarios = connection.define(
       unique: true,
       validate: {
         is: {
-          args: /^[0-9]{11}$/, // Validação para garantir que o CPF contenha 11 números
+          args: /^[0-9]{11}$/, 
           msg: "O CPF deve conter exatamente 11 números.",
         },
       },

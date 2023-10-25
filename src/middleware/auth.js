@@ -18,11 +18,11 @@ async function auth(req, res, next) {
       return res.status(404).json({ error: 'Usuário não encontrado.' });
     }
 
-    // Anexar informações do usuário e payload à solicitação para uso posterior, se necessário
+
     req.payload = payload;
     req.usuario = usuario;
 
-    next(); // Prosseguir para o próximo middleware ou rota
+    next(); 
   } catch (error) {
     return res.status(401).send({
       message: 'Autenticação Falhou: Token inválido ou ausente.',
