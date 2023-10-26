@@ -64,26 +64,27 @@ Neste projeto, desenvolvemos um sistema completo de Marketplace para produtos fa
 
 ### Formato do Sistema
 
-| Item                                         | Descrição                                                                                            |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Carregamento de Dados Iniciais               | Deve ser utilizado como Sistema Gerenciador de BD o PostgreSQL                                       |
-| Cadastro de Usuário                          | Serviço de cadastro de usuário com dados completos, definição de Endpoint com status                 |
-| Login do Usuário                             | Serviço para realizar o login, definição de Endpoint com status                                      |
-| Atualização dos Dados de Usuário             | Serviço para alterar/atualizar os dados do usuário, definição de Endpoint com status                 |
-| Atualização do Status do Usuário no Sistema  | Serviço para alterar/atualizar o status do usuário, definição de Endpoint com status                 |
-| Atualização de Senha do Usuário              | Serviço para alterar/atualizar a senha de determinado usuário, definição do Endpoint com status      |
-| Listagem de Usuário pelo indentificador      | Serviço de consulta de usuário pelo ID, definição de Endpoint com status                             |
-| Cadastro de Despósito                        | Serviço de cadastro de DEpósito com dados completos, definição de Endpoint com status                |
-| Atualização dos dados de Despósito           | Serviço para alterar/atualizar os dados de determinado depósito , definção de Endpoint com status    |
-| Atualização do Status do Depósito no Sistema | Serviço apra alterar/atualizar o status do depósito no sistema, definição de Endpoint com status     |
-| Listagem de Depósitos                        | Serviço de listagem de depósitos cadastrados, definição do Endpoint com status                       |
-| Listagem de Depósito pelo identificador      | Serviço de consulta de depósito pelo ID, definição de Endpoint com status                            |
-| Exclusão de Depósitos                        | Serviço para excluir um depósito pelo ID, definição de Endpoint com status                           |
-| Cadastro de Medicamentos                     | Serviço de cadastro de Medicamentos com dados completos, definição de Endpoint com status            |
-| Atualização dos dados de Medicamentos        | Serviço para alterar/atualizar os dados de determinado medicamento, definição de Endpoint com status |
-| Listagem de Medicamentos                     | Serviço de listagem de medicamentos cadastrados, definição de Endpoint com status                    |
-| Listagem de Medicamentos pelo indentificador | Serviço de listagem de medicamentos pelo ID, definição de Endpoint com status                        |
-| Exclusão de Medicamento                      | Serviço para excluir um medicamento pelo ID, definição de Endpoint com status                        |
+| Item                                | Descrição                                                                                                                |
+| ------------------------------------| ------------------------------------------------------------------------------------------------------------------------ |
+| Carregamento de Dados Iniciais      | Deve ser utilizado como Sistema Gerenciador de BD o PostgreSQL.                                                          |
+| Cadastro de Usuário                 | Serviço de cadastro de Administrador e Comprador com dados completos, definição de Endpoint.                             |
+| Login do Usuário                    | Serviço para realizar o login como Administrador ou Comprador, definição de Endpoint.                                    |
+| Cadastro de Medicamentos            | Serviço de cadastro de medicamentos pelo Administrador, com dados completos, definição de Endpoint.                      |
+| Listagem de Medicamentos            | Serviço de listagem de medicamentos cadastrados pelo Administrador, definição de Endpoint.                               |
+| Listagem de Medicamentos            | Serviço de listagem de todos os medicamentos cadastrados no sistema, definição de Endpoint.                              |
+| Listagem de Medicamentos/ID         | Serviço de listagem de medicamentos pelo seu ID, definição de Endpoint.                                                  |
+| Listagem de endereços Comprador     | Serviço de listagem de todos os endereços cadastrados do Comprador, definição de Endpoint.                               |
+| Editar Medicamentos                 | Serviço de edição de medicamentos cadastrados, definição de Endpoint.                                                    |
+| Listagem de Usuarios                | Serviço de listagem de todos os usuários cadastrados no sistema, definição de Endpoint.                                  |
+| Listagem de Usuario/ID              | Serviço de listagem de usuário pelo seu ID, definição de Endpoint.                                                       |
+| Editar Usuario                      | Serviço de edição de usuário cadastrado no sistema, definição de Endpoint.                                               |
+| Criar Vendas                        | Serviço de criação de venda de medicamentos cadastrados no sistema, definição de Endpoint.                               |
+| Listagem de Compras                 | Serviço de listagem de todas as vendas do Comprador logado, definição de Endpoint.                                       |
+| Listagem de Vendas                  | Serviço de listagem de todas as vendas do Administrador logado, definição de Endpoint .                                  |
+| Dashboard                           | Serviço de listagem de todos os resultados financeiros das vendas realizadas, definição de Endpoint.                     |
+| Documentação SWAGGER                | Serviço de implementação de documentação interativa e amigável para API’s .                                              |
+| Deploy                              | Serviço de implementação de uma aplicação em ambiente de produção, de forma confiável, segura e eficiente para uso real. |
+
 
 ### Plano do Projeto
 
