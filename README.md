@@ -1,5 +1,5 @@
 # M3P-BackEnd-Squad2
-# LAB365-FullStack-M03-ProjFinal-Marketplace de Medicamentos
+# LAB365-FullStack-M03-ProjetoFinal-Marketplace de Medicamentos
 ## Projeto Avaliativo do Módulo3
 ## LAB365- FullStack - Itaguaçu
 ### Projeto realizado em squad, formado pelos alunos desenvolvedores:
