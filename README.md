@@ -15,7 +15,7 @@
 #### Nome do sistema: PharmaSellticos
 
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/logoInst.jpg"-->
+  <img width="480" src="src/assets/to_readme/logoInst.jpeg">
 </p>
 
 ### 🔗 Links
@@ -28,21 +28,21 @@ Status - Em Desenvolvimento
 
 Estrutura geral do back-end das Tabelas
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/geral.jpg"-->
+  <img width="480" src="src/assets/to_readme/geral.JPG">
 </p>
 
 Estrutura geral do back-end dos Usuários
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/usuario.jpg"-->
+  <img width="480" src="src/assets/to_readme/usuario.JPG">
 </p>
 
 Estrutura geral do back-end dos Medicamentos
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/produto.jpg"-->
+  <img width="480" src="src/assets/to_readme/produtos.JPG">
 </p>
 Estrutura geral do back-end de Vendas
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/vendas.jpg"-->
+  <img width="480" src="src/assets/to_readme/vendas.JPG">
 </p>
 
 ### O Desafio
@@ -59,7 +59,7 @@ Neste projeto, desenvolvemos um sistema completo de Marketplace para produtos fa
 | 1    | Ser uma API Rest desenvolvida em Node.JS com uso do Express.js.              |
 | 2    | Utilizar o banco de dados PostgreSQL.                                        |
 | 3    | Ser planejado utilizando o modelo Kanban na ferramenta Trello.               |
-| 4    | Ser versionado no GITHub, possuindo uma documentação detalhada no readme.md. |
+| 4    | Ser versionado no GitHub, possuindo uma documentação detalhada no readme.md. |
 | 5    | Deverá ser criado um pith de apresentação de 15 minutos.                     |
 
 ### Formato do Sistema
