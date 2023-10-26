@@ -137,12 +137,15 @@ npm install
 
 ```bash
 npm run start:dev
+```
 
 
 ## Autores:
+```bash
 Turma: Full-Stack - Itaguaçu
 Squad: ItaguaDevs
 Mentoria: Prof. Pedro Henrique Silva
 Senai/SC: Serviço Nacional de Aprendizagem Industrial
 LAB365: espaço do @senai.sc para desenvolver as habilidades do futuro
-Floripa Mais Tech - Iniciativa da Prefeitura de Florianópolis - SC  
+Floripa Mais Tech - Iniciativa da Prefeitura de Florianópolis - SC
+```
