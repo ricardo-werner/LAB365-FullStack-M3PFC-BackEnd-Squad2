@@ -124,12 +124,11 @@ No desenvolvimento desta aplicação, colocamos em prática:
 
 Clone o projeto para a sua máquina
 ```bash
-https://github.com/FullStack-Itaguacu/M3P-BackEnd-Squad2.git
+gh repo clone FullStack-Itaguacu/M3P-BackEnd-Squad2
 ```
 
 Instale as dependências.
 
-### Backend
 ```bash
 npm install
 ```
@@ -146,4 +145,4 @@ Squad: ItaguaDevs
 Mentoria: Prof. Pedro Henrique Silva
 Senai/SC: Serviço Nacional de Aprendizagem Industrial
 LAB365: espaço do @senai.sc para desenvolver as habilidades do futuro
-Floripa Mais Tech  
+Floripa Mais Tech - Iniciativa da Prefeitura de Florianópolis - SC  
