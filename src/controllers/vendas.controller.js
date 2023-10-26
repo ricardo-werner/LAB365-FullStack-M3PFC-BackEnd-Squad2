@@ -64,7 +64,7 @@ class VendasController {
           ![
             'cartão de crédito',
             'cartão de débito',
-            'pix',
+            'PIX',
             'boleto',
             'transferência bancária',
           ].includes(tipoPagamento)
@@ -96,6 +96,8 @@ class VendasController {
           total,
           tipoPagamento: tipoPagamento,
         });
+
+        console.log(vendas, 'vendas');
 
         await Produtos.update(
           {
