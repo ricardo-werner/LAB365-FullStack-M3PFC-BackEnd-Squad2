@@ -124,7 +124,7 @@ No desenvolvimento desta aplicação, colocamos em prática:
 
 Clone o projeto para a sua máquina
 ```bash
-git@github.com:FullStack-Itaguacu/M3P-BackEnd-Squad2.git
+https://github.com/FullStack-Itaguacu/M3P-BackEnd-Squad2.git
 ```
 
 Instale as dependências.
