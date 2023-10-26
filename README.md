@@ -15,7 +15,7 @@
 #### Nome do sistema: PharmaSellticos
 
 <p align="center">
-  <img width="400" src="src/assets/to_readme/logoInst.jpeg">
+  <img width="250" src="src/assets/to_readme/logoInst.jpeg">
 </p>
 
 ### 🔗 Links
