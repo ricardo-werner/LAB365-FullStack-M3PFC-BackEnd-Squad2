@@ -15,7 +15,7 @@
 #### Nome do sistema: PharmaSellticos
 
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/logoInst.jpg"-->
+  <img width="480" src="src/assets/to_readme/logoInst.jpeg">
 </p>
 
 ### 🔗 Links
@@ -33,16 +33,16 @@ Estrutura geral do back-end das Tabelas
 
 Estrutura geral do back-end dos Usuários
 <p align="center">
-  <img width="400" src="src/assets/to_readme/usuario.JPG">
+  <!--img width="480" src="src/assets/to_readme/usuario.jpg"-->
 </p>
 
 Estrutura geral do back-end dos Medicamentos
 <p align="center">
-  <img width="400" src="src/assets/to_readme/produtos.JPG">
+  <!--img width="480" src="src/assets/to_readme/produto.jpg"-->
 </p>
 Estrutura geral do back-end de Vendas
 <p align="center">
-  <img width="400" src="src/assets/to_readme/vendas.JPG">
+  <!--img width="480" src="src/assets/to_readme/vendas.jpg"-->
 </p>
 
 ### O Desafio
