@@ -85,6 +85,12 @@ Neste projeto, desenvolvemos um sistema completo de Marketplace para produtos fa
 | Documentação SWAGGER                | Serviço de implementação de documentação interativa e amigável para API’s .                                              |
 | Deploy                              | Serviço de implementação de uma aplicação em ambiente de produção, de forma confiável, segura e eficiente para uso real. |
 
+### Link de acesso:
+- Swagger
+- 
+
+- Deploy
+- https://projeto03.onrender.com/
 
 ### Plano do Projeto
 
@@ -114,13 +120,12 @@ No desenvolvimento desta aplicação, colocamos em prática:
 - Node.JS
 - Node Package Manager(NPM)
 - PostgreSQL (Base de dados)
-- DBeaver (Gerenciador de banco de dados)
+- Aplicativo de gerenciador de banco de dados
 
 Clone o projeto para a sua máquina
 ```bash
 git@github.com:FullStack-Itaguacu/M3P-BackEnd-Squad2.git
 ```
-Obs: necessário configurar SSH [(veja como clicando aqui)](https://www.youtube.com/watch?v=n-H1eFSsugo)
 
 Instale as dependências.
 
