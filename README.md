@@ -3,7 +3,7 @@
 ## Projeto Avaliativo do Módulo3
 ## LAB365- FullStack - Itaguaçu
 ### Projeto realizado em squad, formado pelos alunos desenvolvedores:
-- Carlos Hnerique Moreira Junior (Github - https://www.github.com/chmjr)
+- Carlos Henrique Moreira Junior (Github - https://www.github.com/chmjr)
 - Debora Patricia Santos de Souza (Github - https://www.github.com/deborasous )
 - Rafael Zampieron (Github - https://www.github.com/rafazamp )
 - Ricardo Werner Grosscklauss (Github - https://www.github.com/ricado-werner)
