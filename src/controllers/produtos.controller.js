@@ -31,7 +31,6 @@ class ProdutosController {
 
       const usuarioIdBody = req.body.usuarioId || usuarioAutenticadoId;
 
-
       if (usuarioIdBody !== usuarioAutenticadoId) {
         return res.status(403).json({
           message:
@@ -59,11 +58,9 @@ class ProdutosController {
         });
       }
 
-
       const camposEmFalta = [];
-   
+
       const mensagensErro = {
-      
         nomeProduto: 'O Nome do Produto é obrigatório.',
         nomeLab: 'O Nome do Laboratório é obrigatório.',
         imagemProduto: 'O Link da Imagem é obrigatório.',
@@ -73,7 +70,6 @@ class ProdutosController {
         totalEstoque: 'O Estoque é obrigatório.',
       };
 
-  
       for (const campo in mensagensErro) {
         if (!req.body[campo]) {
           camposEmFalta.push(mensagensErro[campo]);
@@ -85,7 +81,7 @@ class ProdutosController {
       }
 
       const data = await Produtos.create({
-        usuarioId: usuarioIdBody, 
+        usuarioId: usuarioIdBody,
         nomeProduto,
         nomeLab,
         imagemProduto,
@@ -116,27 +112,25 @@ class ProdutosController {
 
       const options = {
         where: { usuarioId: req.usuario.id },
-        order: [['totalEstoque', ordem === 'asc' ? 'ASC' : 'DESC']], 
+        order: [['totalEstoque', ordem === 'asc' ? 'ASC' : 'DESC']],
       };
 
       const filtrar = {};
-    
+
       if (nomeProduto) {
         filtrar.nomeProduto = { [Op.iLike]: `%${nomeProduto}%` };
       }
       if (tipoProduto) {
         filtrar.tipoProduto = tipoProduto;
 
-      
         filtrar.usuarioId = req.usuario.id;
       }
 
       options.where = filtrar;
 
-     
       if (offset && limit) {
-        options.offset = Math.max(parseInt(offset, 10), 0); 
-        options.limit = Math.min(parseInt(limit, 10), 20); 
+        options.offset = Math.max(parseInt(offset, 10), 0);
+        options.limit = Math.min(parseInt(limit, 10), 20);
       }
 
       const produtos = await Produtos.findAndCountAll(options);
@@ -283,8 +277,8 @@ class ProdutosController {
         });
       }
 
-      const estoqueAtual = produto.totalEstoque || 0;
-      const novoEstoque = estoqueAtual + totalEstoque;
+      const estoqueAtual = produto.totalEstoque || 0; 
+      const novoEstoque = estoqueAtual + parseInt(totalEstoque);
 
       await Produtos.update(
         {
