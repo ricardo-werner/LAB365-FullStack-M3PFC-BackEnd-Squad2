@@ -13,25 +13,21 @@ const {
 class ProdutosRoutes {
   routesFromProduto() {
     const produtosRoutes = Router();
-    produtosRoutes.post('/produtos/admin', auth, checarAdmin, cadastrarProduto);
+    produtosRoutes.post('/produtos/admin', auth, checarAdmin, cadastrarProduto); //5 ok
     produtosRoutes.get(
       '/produtos/admin/:offset/:limit',
       auth,
       checarAdmin,
       listarProdutosAdmin
-    );
-    produtosRoutes.get(
-      '/produto/:offset/:limit',
-      auth,
-      filtrarProdutos
-    );
-    produtosRoutes.get('/produto/:produtoId', detalharProduto);
+    ); //6 ok
+    produtosRoutes.get('/produtos/:offset/:limit', auth, filtrarProdutos); //7 ok
+    produtosRoutes.get('/produto/:produtoId', auth, detalharProduto); //8 ok
     produtosRoutes.patch(
-      "/produto/admin/:produtoId",
+      '/produto/admin/:produtoId',
       auth,
       checarAdmin,
       atualizarProduto
-    );
+    ); //10 ok
     return produtosRoutes;
   }
 }

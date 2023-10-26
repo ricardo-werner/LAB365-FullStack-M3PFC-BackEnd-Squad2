@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { Op, Model, where } = require('sequelize');
+const { Op } = require('sequelize');
 const { Usuarios } = require('../models/usuarios');
 const { Enderecos } = require('../models/enderecos');
 const { UsuariosEnderecos } = require('../models/usuariosEnderecos');
@@ -25,7 +25,7 @@ class UsuarioController {
       if (!usuario) {
         return res.status(401).json({ message: 'E-mail não encontrado.' });
       }
-      const senhaValida = await bcrypt.compare(senha, usuario.senha); // Compara a senha informada com a senha criptografada no BD
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
       if (!senhaValida) {
         return res.status(401).json({ message: 'Senha inválida.' });
       }
@@ -52,7 +52,6 @@ class UsuarioController {
     }
   }
 
-  // Método para adicionar um usuário COMPRADOR
   async adicionarUsuarioComprador(req, res) {
     try {
       const {
@@ -73,9 +72,8 @@ class UsuarioController {
         senha,
       } = req.body;
 
-      // Verifica se os campos obrigatórios estão ausentes ou vazios
       const camposEmFalta = [];
-      // Objeto com mensagens de erro personalizadas
+
       const mensagensErro = {
         cep: 'O campo CEP é obrigatório.',
         logradouro: 'O campo Logradouro é obrigatório.',
@@ -91,59 +89,50 @@ class UsuarioController {
         senha: 'O campo Senha é obrigatório.',
       };
 
-      // Verifica os campos obrigatórios
       for (const campo in mensagensErro) {
         if (!req.body[campo]) {
           camposEmFalta.push(mensagensErro[campo]);
         }
       }
 
-      // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
         return res.status(422).json({ message: camposEmFalta.join('\n') });
       }
-      // Verifica se o email já está cadastrado
+     
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
-        return res
-          .status(409)
-          .json({
-            message: "E-mail já cadastrado, tente contato com o suporte. ",
-          });
+        return res.status(409).json({
+          message: 'E-mail já cadastrado, tente contato com o suporte. ',
+        });
       }
 
-      // Verifica se o cpf já está cadastrado
       const cpfExiste = await Usuarios.findOne({ where: { cpf: cpf } });
       if (cpfExiste) {
         return res.status(409).json({ message: 'CPF já cadastrado.' });
       }
 
       if (!/^\S+@\S+\.\S+$/.test(email)) {
-        // Verifica o formato do email
         return res.status(400).json('O Email não é válido.');
       }
-      // Verifica o formato do telefone
-      if (!/^\d{8,10}$/.test(telefone)) {
+
+      if (!/^\d{10,11}$/.test(telefone)) {
         return res.status(400).json({
           message: 'O campo telefone deve incluir DDD e o número de telefone.',
         });
       }
 
-      // Verifica se há apenas números no telefone
       if (!/^[0-9]+$/.test(telefone)) {
         return res
           .status(400)
           .json({ message: 'O campo telefone deve conter apenas números.' });
       }
 
-      // Verifica o formato do CPF
       if (!/^\d{11}$/.test(cpf)) {
         return res
           .status(400)
           .json({ message: 'O CPF deve conter 11 número.' });
       }
 
-      // Verifica se há apenas números no CPF
       if (!/^[0-9]+$/.test(cpf)) {
         return res
           .status(400)
@@ -151,23 +140,21 @@ class UsuarioController {
       }
 
       if (
-        senha.length < 8 || //Não pode ser senha com menos de 8 caracteres
-        !/[a-z]/.test(senha) || // Pelo menos uma letra minúscula
-        !/[A-Z]/.test(senha) || // Pelo menos uma letra maiúscula
-        !/\d/.test(senha) || // Pelo menos um número
-        !/[@#$%^&+=!*-]/.test(senha) // Pelo menos um caracter especial
+        senha.length < 8 ||
+        !/[a-z]/.test(senha) ||
+        !/[A-Z]/.test(senha) ||
+        !/\d/.test(senha) ||
+        !/[@#$%^&+=!*-]/.test(senha)
       ) {
         return res
           .status(400)
           .json({ message: 'O campo senha está em um formato inválido.' });
       }
 
-      //verifica se já existe um cep com o numero cadastrado, se o cep existir, usa ele, se não,cria um endereço
       let endereco = await Enderecos.findOne({
         where: { cep: cep, numero: numero },
       });
       if (!endereco) {
-        //Adiciona o endereço no BD
         endereco = await Enderecos.create({
           cep,
           logradouro,
@@ -181,10 +168,9 @@ class UsuarioController {
         });
       }
 
-      //criptografa a senha
       const hashedSenha = await bcrypt.hash(senha, 8);
 
-      const enderecoId = endereco.id; //Pega o Id criado do endereço
+      const enderecoId = endereco.id;
       const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
@@ -211,7 +197,6 @@ class UsuarioController {
     }
   }
 
-  // Método para adicionar um usuário ADMIN
   async adicionarUsuarioAdmin(req, res) {
     try {
       const {
@@ -234,9 +219,8 @@ class UsuarioController {
         tipoUsuario,
       } = req.body;
 
-      // Verifica se os campos obrigatórios estão ausentes ou vazios
       const camposEmFalta = [];
-      // Objeto com mensagens de erro personalizadas
+
       const mensagensErro = {
         cep: 'O campo CEP é obrigatório.',
         logradouro: 'O campo Logradouro é obrigatório.',
@@ -252,56 +236,48 @@ class UsuarioController {
         senha: 'O campo Senha é obrigatório.',
       };
 
-      // Verifica os campos obrigatórios
       for (const campo in mensagensErro) {
         if (!req.body[campo]) {
           camposEmFalta.push(mensagensErro[campo]);
         }
       }
 
-      // Se houver campos em falta, retorne o status 422 com as mensagens de erro
       if (camposEmFalta.length > 0) {
         return res.status(422).json({ message: camposEmFalta.join('\n') });
       }
 
-      // Verifica se o email já está cadastrado
       const emailExiste = await Usuarios.findOne({ where: { email: email } });
       if (emailExiste) {
         return res.status(409).json({ message: 'Email já cadastrado.' });
       }
 
-      // Verifica se o cpf já está cadastrado
       const cpfExiste = await Usuarios.findOne({ where: { cpf: cpf } });
       if (cpfExiste) {
         return res.status(409).json({ message: 'CPF já cadastrado.' });
       }
 
       if (!/^\S+@\S+\.\S+$/.test(email)) {
-        // Verifica o formato do email
         return res.status(400).json({ message: 'O Email não é válido.' });
       }
-      // Verifica o formato do telefone
+
       if (!/^\d{10,11}$/.test(telefone)) {
         return res.status(400).json({
           message: 'O campo telefone deve incluir DDD e o número de telefone.',
         });
       }
 
-      // Verifica se há apenas números no telefone
       if (!/^[0-9]+$/.test(telefone)) {
         return res
           .status(400)
           .json({ message: 'O campo telefone deve conter apenas números.' });
       }
 
-      // Verifica o formato do CPF
       if (!/^\d{11}$/.test(cpf)) {
         return res
           .status(400)
           .json({ message: 'O CPF deve conter 11 número.' });
       }
 
-      // Verifica se há apenas números no CPF
       if (!/^[0-9]+$/.test(cpf)) {
         return res
           .status(400)
@@ -310,10 +286,10 @@ class UsuarioController {
 
       if (
         senha.length < 8 ||
-        !/[a-z]/.test(senha) || // Pelo menos uma letra minúscula
-        !/[A-Z]/.test(senha) || // Pelo menos uma letra maiúscula
-        !/\d/.test(senha) || // Pelo menos um número
-        !/[@#$%^&+=!*-]/.test(senha) // Pelo menos um caracter especial
+        !/[a-z]/.test(senha) ||
+        !/[A-Z]/.test(senha) ||
+        !/\d/.test(senha) ||
+        !/[@#$%^&+=!*-]/.test(senha)
       ) {
         return res.status(400).json({
           message:
@@ -321,12 +297,10 @@ class UsuarioController {
         });
       }
 
-      //verifica se já existe um cep com o numero cadastrado, se o cep existir, usa ele, se não,cria um endereço
       let endereco = await Enderecos.findOne({
         where: { cep: cep, numero: numero },
       });
       if (!endereco) {
-        //Adiciona o endereço no BD
         endereco = await Enderecos.create({
           cep,
           logradouro,
@@ -345,10 +319,10 @@ class UsuarioController {
           .status(400)
           .json({ message: 'O tipo de usuário não é válido.' });
       }
-      //criptografa a senha
+
       const hashedSenha = await bcrypt.hash(senha, 10);
 
-      const enderecoId = endereco.id; //Pega o Id criado do endereço
+      const enderecoId = endereco.id;
       const usuario = await Usuarios.create({
         enderecoId,
         nomeCompleto,
@@ -361,7 +335,6 @@ class UsuarioController {
         tipoUsuario: tipoUsuario,
       });
 
-      //Criação de registro na tabela de associação
       await UsuariosEnderecos.create({
         usuarioId: usuario.id,
         enderecoId: endereco.id,
@@ -391,8 +364,6 @@ class UsuarioController {
         latitude,
         longitude,
       } = req.body;
-
-      console.log(usuario, 'usuarioId');
 
       const enderecoExistente = await Enderecos.findOne({
         where: { cep, numero },
@@ -429,8 +400,6 @@ class UsuarioController {
         enderecoId: novoEndereco.id,
       });
 
-      console.log(enderecosUsuario, 'enderecosUsuario');
-
       return res.status(200).json(enderecosUsuario);
     } catch (error) {
       return res
@@ -466,7 +435,7 @@ class UsuarioController {
       }
 
       const totalRegistros = await Usuarios.count({
-        where: opcoesConsulta.where, // Aplicar os mesmos filtros de consulta
+        where: opcoesConsulta.where, 
       });
 
       const registros = await Usuarios.findAll(opcoesConsulta);
@@ -475,7 +444,7 @@ class UsuarioController {
           .status(204)
           .json({ message: 'Nenhum resultado encontrado.' });
       }
-      console.log(registros.length);
+  
       res.status(200).json({ contar: totalRegistros, resultados: registros });
     } catch (error) {
       res
@@ -492,14 +461,12 @@ class UsuarioController {
         return res.status(400).json({ message: 'ID de usuário inválido.' });
       }
 
-      // Consultar o usuário por ID no banco de dados
       const usuario = await Usuarios.findByPk(usuario_id);
 
       if (!usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado.' });
       }
 
-      // Retorna os detalhes do usuário como um objeto JSON
       return res.status(200).json(usuario);
     } catch (error) {
       return res
@@ -540,7 +507,6 @@ class UsuarioController {
         });
       }
 
-      //valida e atualiza os campos
       if (nomeCompleto !== undefined) {
         try {
           validarNome(nomeCompleto);
@@ -581,7 +547,6 @@ class UsuarioController {
         }
       }
 
-      //validar campo tipoUsuario
       if (tipoUsuario !== undefined) {
         try {
           validarTipoUsuario(tipoUsuario);
@@ -589,7 +554,6 @@ class UsuarioController {
           return res.status(422).json({ message: 'Tipo de usuário inválido.' });
         }
 
-        //não deve permitir trocar 'Administrador' para 'Comprador'
         if (tipoUsuario === 'Administrador') {
           usuario.tipoUsuario = tipoUsuario;
         } else {
@@ -599,7 +563,7 @@ class UsuarioController {
           });
         }
       }
-      //salva as alterações no banco
+
       await usuario.save();
       return res.status(204).json(usuario);
     } catch (error) {
@@ -612,28 +576,26 @@ class UsuarioController {
   async listarEnderecosComprador(req, res) {
     try {
       const usuarioId = req.payload.id;
-      // Consulta os endereços cadastrados do usuário com base no usuárioId
+
       const enderecoIds = await UsuariosEnderecos.findAll({
         where: { usuarioId },
-        attributes: ['enderecoId'], // Obtém apenas os IDs dos endereços
+        attributes: ['enderecoId'],
       });
 
       if (enderecoIds.length === 0) {
-        return res.status(204).send({});
+        return res.status(204).json({});
       }
 
-      // Mapeie os IDs de endereços
       const ids = enderecoIds.map((item) => item.enderecoId);
 
-      // Consulte os detalhes dos endereços com base nos IDs mapeados
       const enderecos = await Enderecos.findAll({
-        where: { id: ids }, // Consulta pelos IDs mapeados
+        where: { id: ids },
       });
 
-      return res.status(200).send(enderecos);
+      return res.status(200).json(enderecos);
     } catch (error) {
       console.error(error.message);
-      return res.status(400).send({
+      return res.status(400).json({
         message: 'Erro ao listar os endereços!',
         error: error.message,
       });
@@ -646,23 +608,20 @@ class UsuarioController {
 
       if (novaSenha !== confirmarSenha) {
         return res.status(400).json({
-          error: 'A nova senha e a confirmação da senha não coincidem.',
+          message: 'A nova senha e a confirmação da senha não coincidem.',
         });
       }
 
-      // Verifica se o email do usuário existe no banco de dados
       const usuario = await Usuarios.findOne({
         where: { email: email },
       });
 
       if (!usuario) {
-        return res.status(404).json({ error: 'Usuário não encontrado.' });
+        return res.status(404).json({ message: 'Usuário não encontrado.' });
       }
 
-      // Gere uma nova senha criptografada
       const novaSenhaCriptografada = await bcrypt.hash(novaSenha, 8);
 
-      // Atualize a senha do usuário no banco de dados
       await Usuarios.update(
         { senha: novaSenhaCriptografada },
         {
