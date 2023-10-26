@@ -1,58 +1,5 @@
-<h1 align=center>
-LAB365-FullStack-M03-Projeto Final: Marketplace de Farmácia
-</h1>
-
----
-
-## 🏁 Índice
-
-- [Sobre o Projeto](#-sobre-o-projeto)
-- [Features](#-features)
-- [Demonstração da Aplicação](#-demonstração-da-aplicação)
-- [Pré-requisitos](#-pré-requisitos)
-- [Instalar e rodar o Backend](#-instalar-e-rodar-o-backend)
-- [Tecnologias](#-tecnologias)
-- [Melhorias](#melhorias)
-- [Autor](#autor)
-- [Licença](#licença)
-- [Status do Projeto](#status-do-projeto)
-
-
----
-
-### 💻 Sobre o Projeto
-
-<p>
-O projeto tem por objetivo desenvolver um sistema Marketplace de produtos farmacêuticos capaz de fazer a gestão de vários vendedores (farmácias), clientes vendas e dentro de uma única plataforma. 
-</p>
-
----
-
-### ✨ Features
-
-- [x] Cadastro de usuário
-- [x] Login do Usuário
-- [x] Autenticação e autorizações
-- [x] Atualização do Status do Usuário no Sistema
-- [x] Atualização de Senha do Usuário
-- [x] Listagem de Usuário pelo identificador
-- [x] Cadastro de Depósito
-- [x] Listagem de Depósitos
-- [x] Listagem de Depósito pelo identificador
-- [x] Exclusão de Depósito
-- [x] Cadastro de medicamentos
-- [x] Atualização dos dados de Depósitos
-- [x] Atualização do Status do Depósito no Sistema
-- [x] Cadastro de Medicamento
-- [x] Atualização dos dados de Medicamento
-- [x] Listagem de Medicamentos
-- [x] Listagem de Medicamento pelo identificador
-- [x] Exclusão de Medicamento
-
----
-
 # M3P-BackEnd-Squad2
-# LAB365-FullStack-M03-ProjFinal-Marketplace
+# LAB365-FullStack-M03-ProjFinal-Marketplace de Medicamentos
 ## Projeto Avaliativo do Módulo3
 ## LAB365- FullStack - Itaguaçu
 ### Projeto realizado em squad, formado pelos alunos desenvolvedores:
@@ -64,7 +11,9 @@ O projeto tem por objetivo desenvolver um sistema Marketplace de produtos farmac
 #### Criação de sistema de Marketplace (E-Commerce):
 - Frontend - React.JS
 - Backend - Node.JS, Express, Sequelize em banco de dados PostgreSQL
+  
 #### Nome do sistema: PharmaSellticos
+
 <p align="center">
   <!--img width="480" src="src/assets/to_readme/logoInst.jpg"-->
 </p>
@@ -79,25 +28,25 @@ Status - Em Desenvolvimento
 
 Estrutura geral do back-end das Tabelas
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/geralTabelas.jpg"-->
+  <!--img width="480" src="src/assets/to_readme/geral.jpg"-->
 </p>
 
 Estrutura geral do back-end dos Usuários
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/usuarioTable.jpg"-->
+  <!--img width="480" src="src/assets/to_readme/usuario.jpg"-->
 </p>
 
 Estrutura geral do back-end dos Medicamentos
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/depositoTable.jpg"-->
+  <!--img width="480" src="src/assets/to_readme/produto.jpg"-->
 </p>
-Estrutura geral do back-end do Gateway de Pagamento
+Estrutura geral do back-end de Vendas
 <p align="center">
-  <!--img width="480" src="src/assets/to_readme/medicamentoTable.jpg"-->
+  <!--img width="480" src="src/assets/to_readme/vendas.jpg"-->
 </p>
 
 ### O Desafio
-Neste projeto foi proposto criar um sistema completo, com front-end e back-end,  para administrarmos um app de Marketplace(E-Commerce) de forma online, codificado em React.JS e Node.JS
+Neste projeto, desenvolvemos um sistema completo de Marketplace para produtos farmacêuticos, gerenciando múltiplos vendedores, clientes e vendas de forma online, utilizando React.JS e Node.JS.
 
 ### Formato do Sistema
 
@@ -111,7 +60,7 @@ Neste projeto foi proposto criar um sistema completo, com front-end e back-end, 
 | 2    | Utilizar o banco de dados PostgreSQL.                                        |
 | 3    | Ser planejado utilizando o modelo Kanban na ferramenta Trello.               |
 | 4    | Ser versionado no GITHub, possuindo uma documentação detalhada no readme.md. |
-| 5    | Deverá ser gravado um vídeo de apreentação do sistema.                       |
+| 5    | Deverá ser criado um pith de apresentação de 15 minutos.                     |
 
 ### Formato do Sistema
 
@@ -142,14 +91,14 @@ No desenvolvimento desta aplicação, colocamos em prática:
 
 | Item | Descrição  |
 | ---- | ---------- |
-|  1   | Node.JS    |
-|  2   | Express.JS |
-|  3   | Sequelize  |
-|  4   | PostgreSQL |
-|  5   | Swagger    |
-|  6   | Deploy     |
-|  7   | Skills     |
-|  8   | Squad      |
+| 1    | Node.JS    |
+| 2    | Express.JS |
+| 3    | Sequelize  |
+| 4    | PostgreSQL |
+| 5    | Swagger    |
+| 6    | Deploy     |
+| 7    | Skills     |
+| 8    | Squad      |
 
 ### Tecnologias utilizadas:
 
