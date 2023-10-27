@@ -22,14 +22,6 @@ const doc = {
       description: "Endpoints de Vendas",
     },
     {
-      name: "Carrinho",
-      description: "Endpoints de Carrinho",
-    },
-    {
-      name: "Pedidos",
-      description: "Endpoints de Pedidos",
-    },
-    {
       name: "Produtos",
       description: "Endpoints de Produtos",
     },
